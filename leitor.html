@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+
+  <meta name="theme-color" content="#ffffff">
+
+  <title>Leitor - Controle de Validade</title>
+
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+      font-family: Arial, sans-serif;
+      background: #f7f7f8;
+      color: #171717;
+    }
+
+
+    .app {
+      width: 100%;
+      max-width: 520px;
+      min-height: 100vh;
+      margin: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+
+
+    /* =========================
+       TOPO
+    ========================= */
+
+    .top {
+      text-align: center;
+      padding: 10px 0 18px;
+    }
+
+
+    .logo {
+      font-size: 23px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+    }
+
+
+    .subtitle {
+      margin-top: 5px;
+      font-size: 13px;
+      color: #777;
+      font-weight: 700;
+    }
+
+
+    /* =========================
+       CARTÃO DO LEITOR
+    ========================= */
+
+    .scanner-card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 14px;
+      box-shadow: 0 2px 14px rgba(0,0,0,.07);
+    }
+
+
+    /* =========================
+       ÁREA DA CÂMERA
+    ========================= */
+
+    .camera {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: #111;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+
+    #video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+
+    /* =========================
+       MOLDURA DO CÓDIGO
+    ========================= */
+
+    .scan-area {
+      position: absolute;
+      left: 9%;
+      right: 9%;
+      top: 35%;
+      height: 30%;
+
+      border: 3px solid #fff;
+      border-radius: 15px;
+
+      box-shadow:
+        0 0 0 9999px rgba(0,0,0,.35);
+
+      pointer-events: none;
+    }
+
+
+    /* cantos amarelos */
+
+    .scan-area::before,
+    .scan-area::after {
+      content: "";
+      position: absolute;
+      width: 35px;
+      height: 35px;
+      border-color: #ffd400;
+      border-style: solid;
+    }
+
+
+    .scan-area::before {
+      left: -3px;
+      top: -3px;
+
+      border-width: 5px 0 0 5px;
+      border-radius: 12px 0 0 0;
+    }
+
+
+    .scan-area::after {
+      right: -3px;
+      bottom: -3px;
+
+      border-width: 0 5px 5px 0;
+      border-radius: 0 0 12px 0;
+    }
+
+
+    .camera-text {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 20px;
+
+      text-align: center;
+
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+
+      text-shadow: 0 1px 4px #000;
+    }
+
+
+    /* =========================
+       LINHA DE LEITURA
+    ========================= */
+
+    .scan-line {
+      position: absolute;
+
+      left: 10%;
+      right: 10%;
+
+      top: 50%;
+
+      height: 2px;
+
+      background: #ffd400;
+
+      box-shadow: 0 0 8px #ffd400;
+
+      animation: scan 2s infinite ease-in-out;
+
+      pointer-events: none;
+    }
+
+
+    @keyframes scan {
+
+      0% {
+        top: 37%;
+      }
+
+      50% {
+        top: 63%;
+      }
+
+      100% {
+        top: 37%;
+      }
+
+    }
+
+
+    /* =========================
+       INSTRUÇÃO
+    ========================= */
+
+    .instruction {
+      text-align: center;
+      margin: 22px 5px 16px;
+    }
+
+
+    .instruction strong {
+      display: block;
+      font-size: 21px;
+      margin-bottom: 6px;
+    }
+
+
+    .instruction span {
+      font-size: 14px;
+      color: #777;
+    }
+
+
+    /* =========================
+       DIGITAÇÃO MANUAL
+    ========================= */
+
+    .or {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      color: #999;
+
+      font-size: 13px;
+      font-weight: 800;
+
+      margin: 18px 0;
+    }
+
+
+    .or::before,
+    .or::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #ddd;
+    }
+
+
+    .manual {
+      display: flex;
+      gap: 8px;
+    }
+
+
+    .manual input {
+      flex: 1;
+      min-width: 0;
+
+      height: 54px;
+
+      border: 1px solid #d7d7d7;
+      border-radius: 14px;
+
+      padding: 0 15px;
+
+      font-size: 16px;
+
+      outline: none;
+    }
+
+
+    .manual input:focus {
+      border-color: #171717;
+
+      box-shadow:
+        0 0 0 3px rgba(0,0,0,.07);
+    }
+
+
+    .manual button {
+      width: 58px;
+      height: 54px;
+
+      border: 0;
+      border-radius: 14px;
+
+      background: #171717;
+      color: #fff;
+
+      font-size: 17px;
+      font-weight: 900;
+
+      cursor: pointer;
+    }
+
+
+    .manual button:active {
+      transform: scale(.96);
+    }
+
+
+    /* =========================
+       STATUS
+    ========================= */
+
+    .status {
+      min-height: 20px;
+
+      margin-top: 16px;
+
+      text-align: center;
+
+      font-size: 14px;
+      font-weight: 800;
+
+      color: #777;
+    }
+
+
+    .status.error {
+      color: #a32626;
+    }
+
+
+    .status.success {
+      color: #126b37;
+    }
+
+
+    /* =========================
+       BOTÃO CÂMERA
+    ========================= */
+
+    .camera-button {
+      width: 100%;
+      height: 58px;
+
+      margin-top: 14px;
+
+      border: 0;
+      border-radius: 16px;
+
+      background: #171717;
+      color: #fff;
+
+      font-size: 17px;
+      font-weight: 900;
+
+      cursor: pointer;
+    }
+
+
+    .camera-button:active {
+      transform: scale(.98);
+    }
+
+
+    /* =========================
+       RODAPÉ
+    ========================= */
+
+    .footer {
+      margin-top: auto;
+
+      padding-top: 25px;
+
+      text-align: center;
+
+      font-size: 12px;
+      color: #aaa;
+    }
+
+
+    /* =========================
+       MOBILE PEQUENO
+    ========================= */
+
+    @media (max-width: 380px) {
+
+      .app {
+        padding: 12px;
+      }
+
+      .instruction strong {
+        font-size: 18px;
+      }
+
+      .scanner-card {
+        padding: 10px;
+      }
+
+    }
+
+  
+
+    /* BOTÃO FLUTUANTE - LISTA */
+    .fab-lista {
+      position: fixed;
+      right: max(18px, calc((100vw - 520px) / 2 + 18px));
+      bottom: max(18px, env(safe-area-inset-bottom));
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: #171717;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 24px;
+      box-shadow: 0 5px 18px rgba(0,0,0,.20);
+      z-index: 1000;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .fab-lista:active {
+      transform: scale(.94);
+    }
+
+
+/* ===== Microinterações ===== */
+button, .fab, .item[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
+button, .fab {
+  position: relative;
+  overflow: hidden;
+  transition: transform .16s ease, box-shadow .2s ease, filter .2s ease, background-color .2s ease;
+}
+button:hover, .fab:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.03);
+}
+button:active, .fab:active {
+  transform: translateY(1px) scale(.97);
+  filter: brightness(.96);
+}
+button:focus-visible, .fab:focus-visible {
+  outline: 3px solid rgba(0,0,0,.16);
+  outline-offset: 3px;
+}
+input {
+  transition: border-color .2s ease, box-shadow .2s ease, transform .15s ease;
+}
+input:focus {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 3px rgba(0,0,0,.07);
+}
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,.38);
+  transform: scale(0);
+  animation: ripple .48s ease-out;
+  pointer-events: none;
+}
+@keyframes ripple { to { transform: scale(3.2); opacity: 0; } }
+.item[role="button"] {
+  cursor: pointer;
+  transition: transform .16s ease, background-color .2s ease, box-shadow .2s ease;
+}
+.item[role="button"]:hover {
+  transform: translateY(-2px);
+  background: rgba(0,0,0,.018);
+}
+.item[role="button"]:active {
+  transform: scale(.985);
+}
+.pop-in { animation: popIn .28s ease both; }
+@keyframes popIn { from { opacity:0; transform: translateY(7px) scale(.985); } to { opacity:1; transform:none; } }
+.success-pop { animation: successPop .55s ease both; }
+@keyframes successPop { 0%{transform:scale(.98);opacity:.7} 45%{transform:scale(1.015)} 100%{transform:scale(1);opacity:1} }
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+  <!-- =========================
+       TOPO
+  ========================= -->
+
+  <div class="top">
+
+    <div class="logo">
+      CONTROLE DE VALIDADE
+    </div>
+
+    <div class="subtitle">
+      Leitor de produtos
+    </div>
+
+  </div>
+
+
+
+  <!-- =========================
+       LEITOR
+  ========================= -->
+
+  <div class="scanner-card">
+
+
+    <div class="camera">
+
+      <video
+        id="video"
+        autoplay
+        muted
+        playsinline>
+      </video>
+
+
+      <div class="scan-area"></div>
+
+      <div class="scan-line"></div>
+
+
+      <div class="camera-text">
+        Aponte para o código de barras
+      </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         INSTRUÇÃO
+    ========================= -->
+
+    <div class="instruction">
+
+      <strong>
+        Bipe o produto
+      </strong>
+
+      <span>
+        O produto será identificado automaticamente
+      </span>
+
+    </div>
+
+
+
+    <!-- =========================
+         DIGITAÇÃO
+    ========================= -->
+
+    <div class="or">
+      <span>OU DIGITE O CÓDIGO</span>
+    </div>
+
+
+    <div class="manual">
+
+      <input
+        id="manualCode"
+        type="text"
+        inputmode="numeric"
+        autocomplete="off"
+        placeholder="Código de barras"
+      >
+
+
+      <button
+        id="manualButton"
+        type="button">
+        OK
+      </button>
+
+    </div>
+
+
+
+    <!-- =========================
+         STATUS
+    ========================= -->
+
+    <div
+      id="status"
+      class="status">
+    </div>
+
+
+
+    <!-- =========================
+         BOTÃO CÂMERA
+    ========================= -->
+
+    <button
+      id="cameraButton"
+      class="camera-button"
+      type="button">
+
+      📷 ATIVAR CÂMERA
+
+    </button>
+
+
+  </div>
+
+
+
+  <div class="footer">
+    Controle de Validade
+  </div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* =====================================================
+   CONFIGURAÇÃO
+===================================================== */
+
+
+/*
+   AQUI VAMOS COLOCAR O ARQUIVO DA SEGUNDA TELA.
+
+   Por enquanto deixei este nome.
+
+   Depois vamos colocar o caminho exato do seu arquivo.
+*/
+
+const ARQUIVO_TELA_PRODUTO =
+  "app_validade_estilo_beep_codigo.html";
+
+
+
+/* =====================================================
+   ELEMENTOS
+===================================================== */
+
+const video =
+  document.getElementById("video");
+
+const manualCode =
+  document.getElementById("manualCode");
+
+const manualButton =
+  document.getElementById("manualButton");
+
+const cameraButton =
+  document.getElementById("cameraButton");
+
+const status =
+  document.getElementById("status");
+
+
+let stream = null;
+
+let lendo = false;
+
+let ultimoCodigo = "";
+
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+function mostrarStatus(texto, tipo = "") {
+
+  status.textContent = texto;
+
+  status.className =
+    "status " + tipo;
+
+}
+
+
+
+/* =====================================================
+   NORMALIZAR CÓDIGO
+===================================================== */
+
+function normalizarCodigo(codigo) {
+
+  return String(codigo)
+    .replace(/\D/g, "")
+    .trim();
+
+}
+
+
+
+/* =====================================================
+   ABRIR SEGUNDA TELA
+===================================================== */
+
+function abrirTelaProduto(codigo) {
+
+  codigo =
+    normalizarCodigo(codigo);
+
+
+  if (!codigo) {
+
+    mostrarStatus(
+      "Digite ou leia um código válido.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  pararCamera();
+
+
+  mostrarStatus(
+    "Produto identificado!",
+    "success"
+  );
+
+
+  /*
+     Envia o código para a segunda tela.
+
+     Exemplo:
+
+     app_validade_estilo_beep(1).html?codigo=7891234567890
+  */
+
+
+  const destino =
+    ARQUIVO_TELA_PRODUTO +
+    "?codigo=" +
+    encodeURIComponent(codigo);
+
+
+  window.location.href = destino;
+
+}
+
+
+
+/* =====================================================
+   CÂMERA
+===================================================== */
+
+async function iniciarCamera() {
+
+
+  if (stream) {
+    return;
+  }
+
+
+  try {
+
+
+    stream =
+      await navigator.mediaDevices.getUserMedia({
+
+        video: {
+
+          facingMode: {
+            ideal: "environment"
+          }
+
+        },
+
+        audio: false
+
+      });
+
+
+    video.srcObject =
+      stream;
+
+
+    await video.play();
+
+
+    cameraButton.textContent =
+      "⏹ PARAR CÂMERA";
+
+
+    mostrarStatus(
+      "Câmera pronta. Aponte para o código."
+    );
+
+
+    iniciarLeitura();
+
+
+  }
+
+  catch (erro) {
+
+    console.error(erro);
+
+
+    mostrarStatus(
+      "Não foi possível abrir a câmera. Verifique a permissão.",
+      "error"
+    );
+
+  }
+
+}
+
+
+
+/* =====================================================
+   PARAR CÂMERA
+===================================================== */
+
+function pararCamera() {
+
+
+  lendo = false;
+
+
+  if (stream) {
+
+    stream
+      .getTracks()
+      .forEach(track => track.stop());
+
+    stream = null;
+
+  }
+
+
+  video.srcObject = null;
+
+
+  cameraButton.textContent =
+    "📷 ATIVAR CÂMERA";
+
+}
+
+
+
+/* =====================================================
+   LEITURA DO CÓDIGO
+===================================================== */
+
+async function iniciarLeitura() {
+
+
+  /*
+     BarcodeDetector é usado quando o navegador
+     oferece suporte nativo.
+  */
+
+
+  if (!("BarcodeDetector" in window)) {
+
+    mostrarStatus(
+      "Seu navegador não possui leitor automático. Use a digitação.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  let detector;
+
+
+  try {
+
+    detector =
+      new BarcodeDetector({
+
+        formats: [
+
+          "ean_13",
+          "ean_8",
+          "upc_a",
+          "upc_e",
+          "code_128",
+          "itf"
+
+        ]
+
+      });
+
+  }
+
+  catch (erro) {
+
+    console.error(erro);
+
+    mostrarStatus(
+      "Leitor de código não disponível.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  lendo = true;
+
+
+  async function procurar() {
+
+
+    if (!lendo || !stream) {
+      return;
+    }
+
+
+    try {
+
+
+      const encontrados =
+        await detector.detect(video);
+
+
+      if (
+        encontrados &&
+        encontrados.length > 0
+      ) {
+
+
+        const codigo =
+          encontrados[0].rawValue;
+
+
+        if (
+          codigo &&
+          codigo !== ultimoCodigo
+        ) {
+
+
+          ultimoCodigo =
+            codigo;
+
+
+          /*
+             PEGA O CÓDIGO E MANDA
+             PARA A SEGUNDA TELA
+          */
+
+          abrirTelaProduto(codigo);
+
+
+          return;
+
+        }
+
+      }
+
+    }
+
+    catch (erro) {
+
+      /*
+         Erros individuais de leitura
+         são ignorados.
+      */
+
+    }
+
+
+    if (lendo) {
+
+      requestAnimationFrame(
+        procurar
+      );
+
+    }
+
+  }
+
+
+  procurar();
+
+}
+
+
+
+/* =====================================================
+   BOTÃO DA CÂMERA
+===================================================== */
+
+cameraButton.addEventListener(
+  "click",
+  function() {
+
+    if (stream) {
+
+      pararCamera();
+
+      mostrarStatus("");
+
+    }
+
+    else {
+
+      iniciarCamera();
+
+    }
+
+  }
+);
+
+
+
+/* =====================================================
+   CÓDIGO MANUAL
+===================================================== */
+
+manualButton.addEventListener(
+  "click",
+  function() {
+
+    const codigo =
+      manualCode.value;
+
+
+    abrirTelaProduto(codigo);
+
+  }
+);
+
+
+
+/* =====================================================
+   ENTER NO CAMPO
+===================================================== */
+
+manualCode.addEventListener(
+  "keydown",
+  function(event) {
+
+    if (event.key === "Enter") {
+
+      event.preventDefault();
+
+      abrirTelaProduto(
+        manualCode.value
+      );
+
+    }
+
+  }
+);
+
+
+
+/* =====================================================
+   INICIAR AUTOMATICAMENTE
+===================================================== */
+
+window.addEventListener(
+  "load",
+  function() {
+
+    /*
+       Tenta abrir a câmera automaticamente.
+
+       Se o navegador bloquear,
+       o funcionário pode apertar
+       "ATIVAR CÂMERA".
+    */
+
+    iniciarCamera();
+
+  }
+);
+
+
+
+
+/* ===== Microinterações de clique ===== */
+(function(){
+  document.addEventListener('click', function(e){
+    const target = e.target.closest('button, .fab');
+    if(!target) return;
+    const rect = target.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height) * .45;
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple';
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+    ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
+    target.appendChild(ripple);
+    setTimeout(()=>ripple.remove(), 520);
+  }, true);
+
+  document.querySelectorAll('input').forEach(function(input){
+    input.addEventListener('focus', function(){ this.classList.add('pop-in'); });
+  });
+})();
+
+</script>
+
+
+
+<a class="fab-lista" href="lista_valididades.html" aria-label="Ver lista de validades" title="Ver lista">☷</a>
+
+</body>
+</html>
