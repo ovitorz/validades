@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Teste Supabase - Controle de Validade</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 30px 20px;
+      font-family: Arial, sans-serif;
+      background: #f4f5f7;
+      color: #222;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .subtitulo {
+      color: #666;
+      margin-bottom: 25px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,.08);
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 17px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 10px;
+      padding: 15px;
+      background: #111;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:active {
+      transform: scale(.98);
+    }
+
+    #resultado {
+      margin-top: 20px;
+    }
+
+    .sucesso {
+      background: #e8f7ed;
+      border: 1px solid #8bd5a1;
+      color: #176b32;
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    .erro {
+      background: #fdecec;
+      border: 1px solid #e5a1a1;
+      color: #9b2020;
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    .info {
+      background: #eef4ff;
+      border: 1px solid #a8c2f5;
+      color: #244d99;
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    .produto {
+      margin-top: 12px;
+      line-height: 1.7;
+    }
+
+    .produto strong {
+      color: #111;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>Teste do Supabase</h1>
+
+  <div class="subtitulo">
+    Controle de Validade — conexão com banco de dados
+  </div>
+
+  <div class="card">
+
+    <label for="codigo">
+      Código de barras
+    </label>
+
+    <input
+      id="codigo"
+      type="text"
+      value="7890000000000"
+      inputmode="numeric"
+      placeholder="Digite o código de barras"
+    >
+
+    <button onclick="consultarProduto()">
+      CONSULTAR PRODUTO
+    </button>
+
+    <div id="resultado"></div>
+
+  </div>
+
+</div>
+
+<script>
+
+  // =====================================================
+  // CONFIGURAÇÃO DO SUPABASE
+  // =====================================================
+
+  const SUPABASE_URL =
+    "https://siuvsahkjfyzdcrskleg.supabase.co";
+
+  const SUPABASE_KEY =
+    "sb_publishable_At--bKaS3ZiZA0dmyN5FIQ_5WF735Nl";
+
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+  // =====================================================
+  // CONSULTAR PRODUTO
+  // =====================================================
+
+  async function consultarProduto() {
+
+    const codigoInput =
+      document.getElementById("codigo");
+
+    const resultado =
+      document.getElementById("resultado");
+
+    const codigo =
+      codigoInput.value.trim();
+
+    if (!codigo) {
+
+      resultado.innerHTML = `
+        <div class="erro">
+          Digite um código de barras.
+        </div>
+      `;
+
+      return;
+    }
+
+    resultado.innerHTML = `
+      <div class="info">
+        Consultando o banco de dados...
+      </div>
+    `;
+
+
+    try {
+
+      const { data, error } =
+        await supabaseClient
+          .from("produtos")
+          .select("id, codigo_barras, nome, foto_url")
+          .eq("codigo_barras", codigo)
+          .maybeSingle();
+
+
+      if (error) {
+
+        console.error(error);
+
+        resultado.innerHTML = `
+          <div class="erro">
+            <strong>Erro ao consultar o Supabase.</strong>
+            <br><br>
+            ${error.message}
+          </div>
+        `;
+
+        return;
+      }
+
+
+      if (!data) {
+
+        resultado.innerHTML = `
+          <div class="erro">
+            <strong>Produto não encontrado.</strong>
+
+            <div class="produto">
+              Código consultado:
+              <strong>${codigo}</strong>
+            </div>
+
+            <br>
+
+            Isso significa que o Supabase respondeu,
+            mas não encontrou esse código na tabela
+            "produtos".
+          </div>
+        `;
+
+        return;
+      }
+
+
+      resultado.innerHTML = `
+        <div class="sucesso">
+
+          <strong>✓ PRODUTO ENCONTRADO!</strong>
+
+          <div class="produto">
+
+            <strong>ID:</strong>
+            ${data.id}
+
+            <br>
+
+            <strong>Código:</strong>
+            ${data.codigo_barras}
+
+            <br>
+
+            <strong>Nome:</strong>
+            ${data.nome}
+
+            <br>
+
+            <strong>Foto:</strong>
+            ${data.foto_url
+              ? "Cadastrada"
+              : "Ainda não cadastrada"}
+
+          </div>
+
+        </div>
+      `;
+
+    } catch (erro) {
+
+      console.error(erro);
+
+      resultado.innerHTML = `
+        <div class="erro">
+
+          <strong>Erro inesperado.</strong>
+
+          <br><br>
+
+          ${erro.message || erro}
+
+        </div>
+      `;
+
+    }
+
+  }
+
+</script>
+
+</body>
+</html>
