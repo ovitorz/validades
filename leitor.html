@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#111111">
+<title>Leitor - Controle de Validade</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;width:100%;height:100%;font-family:Arial,sans-serif;background:#111;color:#fff;overflow:hidden}
+body{min-height:100dvh}
+.app{position:relative;width:100%;height:100dvh;overflow:hidden;background:#111}
+.camera{position:absolute;inset:0;z-index:1;background:#111;overflow:hidden}
+#video{width:100%;height:100%;display:block;object-fit:cover;background:#111}
+.camera:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom,rgba(0,0,0,.58) 0%,rgba(0,0,0,0) 25%,rgba(0,0,0,0) 58%,rgba(0,0,0,.82) 100%)}
+.top{position:absolute;z-index:20;top:max(12px,env(safe-area-inset-top));left:0;right:0;text-align:center;padding:7px 58px;pointer-events:none;text-shadow:0 2px 8px #000}
+.logo{font-size:21px;font-weight:900;letter-spacing:-.5px}
+.subtitle{margin-top:3px;font-size:13px;color:rgba(255,255,255,.82);font-weight:700}
+.scan-area{position:absolute;z-index:10;left:8%;right:8%;top:35%;height:24%;border:2px solid rgba(255,255,255,.92);border-radius:18px;box-shadow:0 0 0 9999px rgba(0,0,0,.28);pointer-events:none}
+.scan-area:before,.scan-area:after{content:"";position:absolute;width:42px;height:42px;border-color:#ffd400;border-style:solid}
+.scan-area:before{left:-2px;top:-2px;border-width:6px 0 0 6px;border-radius:15px 0 0 0}
+.scan-area:after{right:-2px;bottom:-2px;border-width:0 6px 6px 0;border-radius:0 0 15px 0}
+.scan-line{position:absolute;z-index:11;left:9%;right:9%;top:47%;height:2px;background:#ffd400;box-shadow:0 0 10px #ffd400;animation:scan 1.35s infinite ease-in-out;pointer-events:none}
+@keyframes scan{0%,100%{transform:translateY(-35px)}50%{transform:translateY(100px)}}
+.camera-text{position:absolute;z-index:12;left:0;right:0;top:calc(59% + 8px);text-align:center;font-size:15px;font-weight:800;text-shadow:0 2px 8px #000;pointer-events:none}
+.fab-lista{position:absolute;z-index:50;top:max(12px,env(safe-area-inset-top));right:14px;width:46px;height:46px;border-radius:50%;background:rgba(17,17,17,.86);color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:23px;box-shadow:0 4px 16px rgba(0,0,0,.4);backdrop-filter:blur(6px);-webkit-tap-highlight-color:transparent}
+.fab-lista:active{transform:scale(.94)}
+.bottom-panel{position:absolute;z-index:30;left:14px;right:14px;bottom:max(12px,env(safe-area-inset-bottom));max-width:720px;margin:0 auto}
+.instruction{text-align:center;margin-bottom:9px;text-shadow:0 2px 8px #000}
+.instruction strong{display:block;font-size:21px;margin-bottom:2px}
+.instruction span{font-size:12px;color:rgba(255,255,255,.8)}
+.manual{display:flex;gap:8px}
+.manual input{flex:1;min-width:0;height:50px;border:1px solid rgba(255,255,255,.3);border-radius:13px;padding:0 14px;font-size:16px;outline:none;background:rgba(255,255,255,.95);color:#171717}
+.manual input::placeholder{color:#888}
+.manual input:focus{border-color:#ffd400;box-shadow:0 0 0 3px rgba(255,212,0,.2)}
+.manual button{width:56px;height:50px;border:0;border-radius:13px;background:#ffd400;color:#111;font-size:16px;font-weight:900;cursor:pointer}
+.manual button:active{transform:scale(.96)}
+.status{min-height:20px;margin-top:5px;text-align:center;font-size:12px;font-weight:800;color:rgba(255,255,255,.88);text-shadow:0 2px 7px #000}
+.status.error{color:#ff9b9b}.status.success{color:#a6ffbe}
+button{-webkit-tap-highlight-color:transparent}
+
+/* Modo horizontal: usa melhor a largura disponível */
+@media (orientation:landscape){
+  .top{padding-left:120px;padding-right:120px}
+  .logo{font-size:20px}
+  .scan-area{left:27%;right:27%;top:27%;height:46%}
+  .scan-line{left:28%;right:28%;top:50%}
+  .camera-text{top:75%;font-size:13px}
+  .bottom-panel{left:18px;right:18px;bottom:max(10px,env(safe-area-inset-bottom));max-width:none}
+  .instruction{display:none}
+  .manual{max-width:560px;margin:0 auto}
+  .status{margin-top:3px}
+}
+
+@media (max-width:380px){
+  .logo{font-size:18px}.subtitle{font-size:12px}
+  .scan-area{top:33%;height:24%;left:6%;right:6%}
+  .scan-line{left:7%;right:7%;top:45%}
+  .camera-text{top:59%;font-size:13px}
+  .instruction strong{font-size:19px}
+  .bottom-panel{left:10px;right:10px}
+}
+
+@media (orientation:landscape) and (max-height:430px){
+  .top{top:5px}.logo{font-size:16px}.subtitle{font-size:11px}
+  .fab-lista{top:6px;right:8px;width:40px;height:40px;font-size:20px}
+  .scan-area{top:20%;height:48%}
+  .scan-line{top:44%}
+  .camera-text{display:none}
+  .bottom-panel{left:10px;right:10px;bottom:7px}
+  .manual input,.manual button{height:44px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="camera"><video id="video" autoplay muted playsinline></video></div>
+  <div class="top"><div class="logo">CONTROLE DE VALIDADE</div><div class="subtitle">Leitor de produtos</div></div>
+  <div class="scan-area"></div>
+  <div class="scan-line"></div>
+  <div class="camera-text">Aponte para o código de barras</div>
+
+  <div class="bottom-panel">
+    <div class="instruction"><strong>Bipe o produto</strong><span>Aponte a câmera e aguarde o bip</span></div>
+    <div class="manual">
+      <input id="manualCode" type="text" inputmode="numeric" autocomplete="off" placeholder="Digite o código de barras">
+      <button id="manualButton" type="button">OK</button>
+    </div>
+    <div id="status" class="status">Abrindo câmera...</div>
+  </div>
+</div>
+<a class="fab-lista" href="lista_valididades.html" aria-label="Ver lista de validades" title="Ver lista">☷</a>
+
+<!-- Motor rápido e compatível com Android/iPhone -->
+<script src="https://unpkg.com/@zxing/browser@0.2.1"></script>
+<script>
+const ARQUIVO_TELA_PRODUTO="app_validade_estilo_beep_codigo.html";
+const video=document.getElementById("video");
+const manualCode=document.getElementById("manualCode");
+const manualButton=document.getElementById("manualButton");
+const status=document.getElementById("status");
+
+let scanner=null;
+let scannerControls=null;
+let stream=null;
+let nativeDetector=null;
+let nativeLoop=false;
+let ultimoCodigo="";
+let processando=false;
+let iniciando=false;
+
+function mostrarStatus(texto,tipo=""){
+  status.textContent=texto;
+  status.className="status "+tipo;
+}
+
+function normalizarCodigo(codigo){
+  return String(codigo||"").replace(/\D/g,"").trim();
+}
+
+function beep(){
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC)return;
+    const ctx=new AC();
+    const osc=ctx.createOscillator();
+    const gain=ctx.createGain();
+    osc.type="sine";
+    osc.frequency.value=1100;
+    gain.gain.setValueAtTime(.0001,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.22,ctx.currentTime+.008);
+    gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+.09);
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.start();osc.stop(ctx.currentTime+.10);
+    setTimeout(()=>{try{ctx.close()}catch(e){}},300);
+  }catch(e){}
+}
+
+function abrirTelaProduto(codigo){
+  codigo=normalizarCodigo(codigo);
+  if(!codigo){
+    mostrarStatus("Digite um código válido.","error");
+    manualCode.focus();
+    return;
+  }
+  if(processando)return;
+  processando=true;
+  ultimoCodigo=codigo;
+  beep();
+  mostrarStatus("Código encontrado!","success");
+  pararCamera();
+  setTimeout(()=>{
+    window.location.href=ARQUIVO_TELA_PRODUTO+"?codigo="+encodeURIComponent(codigo);
+  },80);
+}
+
+async function iniciarCamera(){
+  if(iniciando || stream)return;
+  iniciando=true;
+  try{
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      throw new Error("Câmera não disponível");
+    }
+
+    stream=await navigator.mediaDevices.getUserMedia({
+      audio:false,
+      video:{
+        facingMode:{ideal:"environment"},
+        width:{ideal:1280},
+        height:{ideal:720},
+        frameRate:{ideal:30,max:30},
+        focusMode:{ideal:"continuous"}
+      }
+    });
+
+    video.srcObject=stream;
+    await video.play();
+
+    // Tenta manter foco contínuo quando o aparelho permitir.
+    try{
+      const track=stream.getVideoTracks()[0];
+      const caps=track.getCapabilities ? track.getCapabilities() : {};
+      if(caps.focusMode && caps.focusMode.includes("continuous")){
+        await track.applyConstraints({advanced:[{focusMode:"continuous"}]});
+      }
+    }catch(e){}
+
+    mostrarStatus("Leitor ativo — aponte para o código.");
+
+    // Android/Chrome: BarcodeDetector costuma ser mais rápido.
+    if("BarcodeDetector" in window){
+      try{
+        const formatos=await BarcodeDetector.getSupportedFormats();
+        const aceitos=["ean_13","ean_8","upc_a","upc_e","code_128","itf"]
+          .filter(f=>formatos.includes(f));
+        if(aceitos.length){
+          nativeDetector=new BarcodeDetector({formats:aceitos});
+          iniciarLeituraNativa();
+          return;
+        }
+      }catch(e){
+        nativeDetector=null;
+      }
+    }
+
+    // iPhone/Safari e navegadores sem BarcodeDetector: ZXing.
+    await iniciarLeituraZXing();
+  }catch(erro){
+    console.error(erro);
+    stream=null;
+    mostrarStatus("Não foi possível abrir a câmera. Digite o código abaixo.","error");
+  }finally{
+    iniciando=false;
+  }
+}
+
+function iniciarLeituraNativa(){
+  if(nativeLoop)return;
+  nativeLoop=true;
+  let ultimoScan=0;
+
+  async function loop(){
+    if(!nativeLoop || processando)return;
+    if(video.readyState>=2 && nativeDetector){
+      const agora=performance.now();
+      if(agora-ultimoScan>=45){
+        ultimoScan=agora;
+        try{
+          const resultados=await nativeDetector.detect(video);
+          if(resultados && resultados.length){
+            const codigo=normalizarCodigo(resultados[0].rawValue);
+            if(codigo && codigo!==ultimoCodigo){
+              abrirTelaProduto(codigo);
+              return;
+            }
+          }
+        }catch(e){}
+      }
+    }
+    setTimeout(loop,25);
+  }
+  loop();
+}
+
+async function iniciarLeituraZXing(){
+  if(scannerControls || !window.ZXingBrowser)throw new Error("ZXing não carregado");
+
+  scanner=new ZXingBrowser.BrowserMultiFormatOneDReader(undefined,{
+    delayBetweenScanSuccess:100,
+    delayBetweenScanAttempts:40,
+    tryHarder:false
+  });
+
+  // Reaproveita a câmera já aberta; isso evita atraso extra no iPhone.
+  scannerControls=await scanner.decodeFromStream(stream,video,function(result,error){
+    if(!result || processando)return;
+    const codigo=normalizarCodigo(result.getText ? result.getText() : result.text);
+    if(codigo && codigo!==ultimoCodigo)abrirTelaProduto(codigo);
+  });
+}
+
+function pararCamera(){
+  nativeLoop=false;
+  nativeDetector=null;
+  try{if(scannerControls)scannerControls.stop()}catch(e){}
+  scannerControls=null;
+  try{if(scanner && scanner.reset)scanner.reset()}catch(e){}
+  scanner=null;
+  if(stream){
+    try{stream.getTracks().forEach(track=>track.stop())}catch(e){}
+    stream=null;
+  }
+  if(video.srcObject)video.srcObject=null;
+}
+
+manualButton.addEventListener("click",()=>abrirTelaProduto(manualCode.value));
+manualCode.addEventListener("keydown",e=>{
+  if(e.key==="Enter"){
+    e.preventDefault();
+    abrirTelaProduto(manualCode.value);
+  }
+});
+
+window.addEventListener("load",()=>iniciarCamera());
+
+// Se o usuário voltar para o navegador, liga novamente automaticamente.
+document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState==="visible" && !stream && !iniciando && !processando){
+    iniciarCamera();
+  }
+});
+
+// Mantém o leitor funcionando após uma rotação do aparelho.
+window.addEventListener("orientationchange",()=>{
+  setTimeout(()=>{
+    if(video.srcObject){
+      try{video.play()}catch(e){}
+    }
+  },250);
+});
+</script>
+</body>
+</html>
