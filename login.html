@@ -57,10 +57,8 @@ msg.className='msg';setLoading(true);
 const {error}=await supabaseClient.auth.signInWithPassword({email,password});
 setLoading(false);
 if(error){showMessage('E-mail ou senha incorretos.');return}
-showMessage('Login realizado com sucesso.','ok');
-setTimeout(() => {
-  window.location.href = 'leitor.html';
-}, 500);
+// Redireciona assim que o Supabase confirmou a sessão.
+window.location.replace('leitor.html');
 });
 
 forgotBtn.addEventListener('click',async()=>{
