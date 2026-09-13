@@ -45,249 +45,148 @@
     z-index:10;
     border-bottom:1px solid rgba(0,0,0,.035);
   }
-  .title{
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
+  .title{display:flex;align-items:center;gap:10px}
   .back{
-    width:34px;height:34px;
-    border:0;background:transparent;
-    font-size:24px;
-    line-height:1;
-    cursor:pointer;
-    color:#333;
-    padding:0;
+    width:34px;height:34px;border:0;background:transparent;
+    font-size:24px;line-height:1;cursor:pointer;color:#333;padding:0;
   }
   h1{
-    margin:0;
-    font-size:22px;
-    font-weight:700;
-    letter-spacing:-.4px;
+    margin:0;font-size:22px;font-weight:700;letter-spacing:-.4px;
   }
   .header-actions{display:flex;gap:5px;align-items:center}
   .icon-btn{
-    width:36px;height:36px;
-    border:0;
-    border-radius:50%;
-    background:transparent;
-    cursor:pointer;
-    font-size:19px;
-    color:#555;
+    width:36px;height:36px;border:0;border-radius:50%;
+    background:transparent;cursor:pointer;font-size:19px;color:#555;
   }
   .icon-btn:active{background:#e9e9e6}
 
-  .account-wrap{
-    display:none;
-    padding:10px 16px 12px;
-    background:var(--bg);
-  }
+  .account-wrap{display:none;padding:10px 16px 12px;background:var(--bg)}
   .account-card{
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:16px;
-    padding:13px 14px;
-    box-shadow:0 1px 2px rgba(0,0,0,.025);
+    background:#fff;border:1px solid var(--line);border-radius:16px;
+    padding:13px 14px;box-shadow:0 1px 2px rgba(0,0,0,.025);
   }
   .account-label{
-    font-size:11px;
-    color:var(--muted);
-    margin-bottom:7px;
-    font-weight:700;
-    text-transform:uppercase;
-    letter-spacing:.3px;
+    font-size:11px;color:var(--muted);margin-bottom:7px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.3px;
   }
   .account-row{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    font-size:13px;
-    line-height:1.5;
+    display:flex;align-items:center;gap:8px;font-size:13px;line-height:1.5;
   }
   .account-row + .account-row{margin-top:3px}
   .account-icon{width:18px;text-align:center;color:#777}
   .account-value{
-    min-width:0;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
+    min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   }
   .account-logout{
-    margin-top:10px;
-    width:100%;
-    height:40px;
-    border:0;
-    border-radius:11px;
-    background:#222;
-    color:#fff;
-    font-size:12px;
-    font-weight:800;
-    cursor:pointer;
+    margin-top:10px;width:100%;height:40px;border:0;border-radius:11px;
+    background:#222;color:#fff;font-size:12px;font-weight:800;cursor:pointer;
   }
 
-  .search-wrap{
-    display:none;
-    padding:0 16px 10px;
-    background:var(--bg);
-  }
+  .search-wrap{display:none;padding:0 16px 10px;background:var(--bg)}
   .search-wrap.open{display:block}
   .search{
-    width:100%;
-    border:1px solid #e2e2dd;
-    background:#fff;
-    border-radius:13px;
-    padding:10px 13px;
-    font-size:14px;
-    outline:none;
+    width:100%;border:1px solid #e2e2dd;background:#fff;border-radius:13px;
+    padding:10px 13px;font-size:14px;outline:none;
   }
 
   .content{padding:10px 14px 0}
-  .summary{
-    padding:4px 4px 12px;
-    color:var(--muted);
-    font-size:12px;
-  }
+  .summary{padding:4px 4px 12px;color:var(--muted);font-size:12px}
 
   .item{
-    display:flex;
-    gap:12px;
-    align-items:stretch;
-    background:var(--surface);
-    border:1px solid var(--line);
-    border-radius:16px;
-    padding:11px;
-    margin-bottom:9px;
+    display:flex;gap:12px;align-items:stretch;background:var(--surface);
+    border:1px solid var(--line);border-radius:16px;padding:11px;margin-bottom:9px;
     box-shadow:0 1px 2px rgba(0,0,0,.025);
+    cursor:pointer;-webkit-tap-highlight-color:transparent;
   }
+  .item:active{transform:scale(.995)}
+  .item::after{
+    content:'›';align-self:center;color:#aaa;font-size:22px;padding-left:2px
+  }
+
   .photo{
-    width:58px;
-    height:58px;
-    flex:0 0 58px;
-    border-radius:12px;
-    overflow:hidden;
-    background:#f0f0ed;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:#aaa;
-    font-size:22px;
+    width:58px;height:58px;flex:0 0 58px;border-radius:12px;overflow:hidden;
+    background:#f0f0ed;display:flex;align-items:center;justify-content:center;
+    color:#aaa;font-size:22px;
   }
-  .photo img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-  }
+  .photo img{width:100%;height:100%;object-fit:cover}
+
   .info{min-width:0;flex:1}
   .topline{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:8px;
-    margin-bottom:3px;
+    display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:3px;
   }
-  .date{
-    font-size:13px;
-    font-weight:750;
-    letter-spacing:.05px;
-  }
+  .date{font-size:13px;font-weight:750;letter-spacing:.05px}
   .status{
-    flex:0 0 auto;
-    border-radius:999px;
-    padding:4px 8px;
-    font-size:10px;
-    font-weight:750;
-    white-space:nowrap;
+    flex:0 0 auto;border-radius:999px;padding:4px 8px;font-size:10px;
+    font-weight:750;white-space:nowrap;
   }
   .normal{color:#707070;background:#f1f1ef}
   .warning{color:#966900;background:var(--yellow-bg)}
   .expired{color:var(--red);background:var(--red-bg)}
   .name{
-    font-size:14px;
-    font-weight:650;
-    line-height:1.25;
-    margin-bottom:3px;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
+    font-size:14px;font-weight:650;line-height:1.25;margin-bottom:3px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
-  .code{
-    font-size:11px;
-    color:var(--muted);
-    margin-bottom:5px;
-  }
+  .code{font-size:11px;color:var(--muted);margin-bottom:5px}
   .store{
-    font-size:10.5px;
-    color:#999;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
+    font-size:10.5px;color:#999;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
-  .days{
-    font-size:11px;
-    font-weight:650;
-    margin-top:5px;
-  }
-  .days.warning{background:transparent;padding:0}
-  .days.expired{background:transparent;padding:0}
+  .days{font-size:11px;font-weight:650;margin-top:5px}
+  .days.warning,.days.expired{background:transparent;padding:0}
 
-  .empty{
-    text-align:center;
-    padding:75px 25px;
-    color:#999;
-  }
+  .empty{text-align:center;padding:75px 25px;color:#999}
   .empty-icon{font-size:34px;margin-bottom:10px}
-  .empty strong{
-    display:block;
-    color:#444;
-    font-size:15px;
-    margin-bottom:5px;
-  }
+  .empty strong{display:block;color:#444;font-size:15px;margin-bottom:5px}
   .empty span{font-size:12px;line-height:1.5}
 
   .fab{
     position:fixed;
     right:max(18px,calc((100vw - 560px)/2 + 18px));
-    bottom:22px;
-    width:54px;height:54px;
-    border:0;
-    border-radius:50%;
-    background:#222;
-    color:#fff;
-    font-size:29px;
-    line-height:54px;
-    box-shadow:0 8px 22px rgba(0,0,0,.18);
-    cursor:pointer;
-    z-index:20;
+    bottom:22px;width:54px;height:54px;border:0;border-radius:50%;
+    background:#222;color:#fff;font-size:29px;line-height:54px;
+    box-shadow:0 8px 22px rgba(0,0,0,.18);cursor:pointer;z-index:20;
   }
   .fab:active{transform:scale(.96)}
 
-
-  .item{cursor:pointer;-webkit-tap-highlight-color:transparent}
-  .item:active{transform:scale(.995)}
-  .item::after{content:'›';align-self:center;color:#aaa;font-size:22px;padding-left:2px}
-  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.38);display:none;align-items:flex-end;justify-content:center;z-index:100}
+  .modal-backdrop{
+    position:fixed;inset:0;background:rgba(0,0,0,.38);display:none;
+    align-items:flex-end;justify-content:center;z-index:100;
+  }
   .modal-backdrop.open{display:flex}
-  .modal{width:min(560px,100%);background:#fff;border-radius:22px 22px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom));box-shadow:0 -8px 30px rgba(0,0,0,.18)}
+  .modal{
+    width:min(560px,100%);background:#fff;border-radius:22px 22px 0 0;
+    padding:20px 18px calc(20px + env(safe-area-inset-bottom));
+    box-shadow:0 -8px 30px rgba(0,0,0,.18)
+  }
   .modal h2{margin:0 0 5px;font-size:18px}
   .modal p{margin:0 0 16px;color:#777;font-size:13px;line-height:1.4}
-  .modal-date{width:100%;height:52px;border:1px solid #ddd;border-radius:13px;padding:10px 12px;font-size:18px;font-weight:700;margin-bottom:12px}
+  .modal-date{
+    width:100%;height:52px;border:1px solid #ddd;border-radius:13px;
+    padding:10px 12px;font-size:18px;font-weight:700;margin-bottom:12px
+  }
   .modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-  .modal-actions button{height:50px;border:0;border-radius:13px;font-weight:800;cursor:pointer}
+  .modal-actions button{
+    height:50px;border:0;border-radius:13px;font-weight:800;cursor:pointer
+  }
   .btn-save-date{background:#222;color:#fff}
   .btn-delete{background:#fde7e7;color:#b32626}
-  .btn-close{width:100%;height:44px;border:0;background:transparent;color:#777;font-weight:700;margin-top:5px;cursor:pointer}
-  @media(max-width:560px){
-    .app{max-width:none}
+  .btn-close{
+    width:100%;height:44px;border:0;background:transparent;color:#777;
+    font-weight:700;margin-top:5px;cursor:pointer
   }
+  @media(max-width:560px){.app{max-width:none}}
 </style>
 </head>
+
 <body>
+
 <div class="app">
+
   <header>
     <div class="title">
       <button class="back" onclick="history.back()" aria-label="Voltar">‹</button>
       <h1>Validades</h1>
     </div>
+
     <div class="header-actions">
       <button class="icon-btn" id="accountBtn" aria-label="Sua conta" title="Sua conta">◉</button>
       <button class="icon-btn" id="searchBtn" aria-label="Pesquisar" title="Pesquisar">⌕</button>
@@ -297,21 +196,30 @@
   <div class="account-wrap" id="accountWrap">
     <div class="account-card">
       <div class="account-label">Sua conta</div>
+
       <div class="account-row">
         <span class="account-icon">✉</span>
         <span class="account-value" id="accountEmail">Carregando...</span>
       </div>
+
       <div class="account-row">
         <span class="account-icon">⌂</span>
         <span class="account-value" id="accountStore">Carregando loja...</span>
       </div>
-      <button class="account-logout" id="logoutBtn" type="button">SAIR</button>
+
+      <button class="account-logout" id="logoutBtn" type="button">
+        SAIR
+      </button>
     </div>
   </div>
 
   <div class="search-wrap" id="searchWrap">
-    <input class="search" id="searchInput" type="search"
-           placeholder="Pesquisar produto ou código">
+    <input
+      class="search"
+      id="searchInput"
+      type="search"
+      placeholder="Pesquisar produto ou código"
+    >
   </div>
 
   <main class="content">
@@ -319,359 +227,1166 @@
     <section id="list"></section>
   </main>
 
-  <button class="fab" type="button" onclick="voltarAoLeitor()"
-          aria-label="Cadastrar validade">+</button>
+  <button
+    class="fab"
+    type="button"
+    onclick="voltarAoLeitor()"
+    aria-label="Cadastrar validade"
+  >+</button>
+
 </div>
 
-<div class="modal-backdrop" id="editModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+<div
+  class="modal-backdrop"
+  id="editModal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="modalTitle"
+>
   <div class="modal">
+
     <h2 id="modalTitle">Editar validade</h2>
+
     <p id="modalProduct"></p>
-    <input id="modalDate" class="modal-date" type="date">
+
+    <input
+      id="modalDate"
+      class="modal-date"
+      type="date"
+    >
+
     <div class="modal-actions">
-      <button class="btn-save-date" id="modalSave">SALVAR DATA</button>
-      <button class="btn-delete" id="modalDelete">EXCLUIR</button>
+      <button class="btn-save-date" id="modalSave">
+        SALVAR DATA
+      </button>
+
+      <button class="btn-delete" id="modalDelete">
+        EXCLUIR
+      </button>
     </div>
-    <button class="btn-close" id="modalClose">Cancelar</button>
+
+    <button class="btn-close" id="modalClose">
+      Cancelar
+    </button>
+
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 const SUPABASE_URL = 'https://siuvsahkjfyzdcrskleg.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_At--bKaS3ZiZA0dmyN5FIQ_5WF735Nl';
+
+const SUPABASE_PUBLISHABLE_KEY =
+  'sb_publishable_At--bKaS3ZiZA0dmyN5FIQ_5WF735Nl';
+
 const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_PUBLISHABLE_KEY
 );
 
-(async function verificarSessao(){
-  const { data, error } = await supabaseClient.auth.getSession();
+/* =========================================================
+   SESSÃO
+========================================================= */
 
-  if(error || !data.session){
+async function getSessionAndUser(){
+
+  const {
+    data: sessionData,
+    error: sessionError
+  } = await supabaseClient.auth.getSession();
+
+  if(sessionError){
+    console.error('Erro ao verificar sessão:', sessionError);
     window.location.replace('login.html');
-    return;
-  }
-})();
-</script>
-
-<script>
-async function carregarConta(){
-  const emailEl = document.getElementById('accountEmail');
-  const storeEl = document.getElementById('accountStore');
-
-  const { data: sessionData, error: sessionError } =
-    await supabaseClient.auth.getSession();
-
-  if(sessionError || !sessionData.session){
-    window.location.replace('login.html');
-    return;
+    return null;
   }
 
-  emailEl.textContent = sessionData.session.user.email || 'E-mail não informado';
+  if(!sessionData.session){
+    window.location.replace('login.html');
+    return null;
+  }
 
-  const { data: usuario, error: usuarioError } = await supabaseClient
+  const authUser = sessionData.session.user;
+
+  const {
+    data: usuario,
+    error: usuarioError
+  } = await supabaseClient
     .from('usuarios')
-    .select('loja_id')
-    .eq('auth_user_id', sessionData.session.user.id)
+    .select('id, auth_user_id, loja_id')
+    .eq('auth_user_id', authUser.id)
     .maybeSingle();
 
   if(usuarioError){
     console.error('Erro ao buscar usuário:', usuarioError);
-    storeEl.textContent = 'Loja não identificada';
+    alert('Não foi possível identificar seu usuário.');
+    return null;
+  }
+
+  if(!usuario){
+    alert('Usuário não encontrado na tabela usuarios.');
+    return null;
+  }
+
+  if(!usuario.loja_id){
+    alert('Seu usuário ainda não possui uma loja vinculada.');
+    return null;
+  }
+
+  return {
+    session: sessionData.session,
+    authUser,
+    usuario
+  };
+}
+
+
+/* =========================================================
+   CONTA / LOJA
+========================================================= */
+
+async function carregarConta(){
+
+  const emailEl = document.getElementById('accountEmail');
+  const storeEl = document.getElementById('accountStore');
+
+  const dados = await getSessionAndUser();
+
+  if(!dados){
     return;
   }
 
-  if(!usuario || !usuario.loja_id){
-    storeEl.textContent = 'Loja não vinculada';
-    return;
-  }
+  emailEl.textContent =
+    dados.authUser.email || 'E-mail não informado';
 
-  const { data: loja, error: lojaError } = await supabaseClient
+  const {
+    data: loja,
+    error: lojaError
+  } = await supabaseClient
     .from('lojas')
     .select('nome')
-    .eq('id', usuario.loja_id)
+    .eq('id', dados.usuario.loja_id)
     .maybeSingle();
 
   if(lojaError){
+
     console.error('Erro ao buscar loja:', lojaError);
+
     storeEl.textContent = 'Loja não identificada';
+
     return;
   }
 
-  storeEl.textContent = loja?.nome ? `Loja: ${loja.nome}` : 'Loja não identificada';
+  storeEl.textContent =
+    loja?.nome
+      ? `Loja: ${loja.nome}`
+      : 'Loja não identificada';
 }
 
-document.getElementById('accountBtn').addEventListener('click',()=>{
+
+/* =========================================================
+   BOTÃO CONTA
+========================================================= */
+
+document.getElementById('accountBtn').addEventListener('click', () => {
+
   const wrap = document.getElementById('accountWrap');
-  wrap.style.display = wrap.style.display === 'block' ? 'none' : 'block';
+
+  wrap.style.display =
+    wrap.style.display === 'block'
+      ? 'none'
+      : 'block';
+
 });
 
-document.getElementById('logoutBtn').addEventListener('click', async ()=>{
-  const { error } = await supabaseClient.auth.signOut();
-  if(error){
-    console.error(error);
-    alert('Não foi possível sair. Tente novamente.');
-    return;
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+document.getElementById('logoutBtn').addEventListener(
+  'click',
+  async () => {
+
+    const { error } =
+      await supabaseClient.auth.signOut();
+
+    if(error){
+
+      console.error(error);
+
+      alert(
+        'Não foi possível sair. Tente novamente.'
+      );
+
+      return;
+    }
+
+    window.location.replace('login.html');
   }
-  window.location.replace('login.html');
-});
+);
 
-carregarConta();
 
-const KEY = 'validades_v2';
+/* =========================================================
+   CONFIGURAÇÕES LOCAIS
+========================================================= */
+
 const PHOTOS = 'fotos_produtos_v2';
 
-const PRODUCTS = [
-  // O cadastro atual possui sua própria lista de produtos.
-  // A lista de validades usa os dados salvos no localStorage.
-];
+let photoMap = {};
 
-const photoMap = JSON.parse(localStorage.getItem(PHOTOS) || '{}');
-let records = JSON.parse(localStorage.getItem(KEY) || '[]');
-
-function normalizeCode(v){
-  return String(v ?? '').replace(/\D/g,'');
+try{
+  photoMap =
+    JSON.parse(
+      localStorage.getItem(PHOTOS) || '{}'
+    );
+}catch(e){
+  photoMap = {};
 }
+
+
+/* =========================================================
+   DADOS
+========================================================= */
+
+let records = [];
+
+let selectedRecordId = null;
+
+let currentLojaId = null;
+
+
+/* =========================================================
+   NORMALIZAÇÃO
+========================================================= */
+
+function normalizeCode(value){
+
+  return String(value ?? '')
+    .replace(/\D/g,'');
+
+}
+
+
+/* =========================================================
+   PRODUTO
+========================================================= */
 
 function getProductName(record){
-  if(record.nome) return record.nome;
-  const code = normalizeCode(record.codigo);
-  const p = PRODUCTS.find(x => normalizeCode(x.codigo) === code);
-  return p?.nome || 'Produto sem nome';
+
+  return (
+    record.nome ||
+    record.produto_nome ||
+    'Produto sem nome'
+  );
+
 }
+
+
+/* =========================================================
+   FOTO
+========================================================= */
 
 function getPhoto(record){
-  const code = normalizeCode(record.codigo);
-  return photoMap[record.codigo] || photoMap[code] || record.foto || '';
+
+  const code =
+    normalizeCode(record.codigo);
+
+  return (
+    record.foto_url ||
+    record.foto ||
+    photoMap[record.codigo] ||
+    photoMap[code] ||
+    ''
+  );
+
 }
+
+
+/* =========================================================
+   DATAS
+========================================================= */
 
 function parseLocalDate(value){
-  if(!value) return null;
-  const parts = String(value).split('-').map(Number);
-  if(parts.length !== 3 || parts.some(Number.isNaN)) return null;
-  return new Date(parts[0], parts[1]-1, parts[2]);
+
+  if(!value){
+    return null;
+  }
+
+  const parts =
+    String(value)
+      .split('-')
+      .map(Number);
+
+  if(
+    parts.length !== 3 ||
+    parts.some(Number.isNaN)
+  ){
+    return null;
+  }
+
+  return new Date(
+    parts[0],
+    parts[1] - 1,
+    parts[2]
+  );
+
 }
+
 
 function daysUntil(value){
-  const d = parseLocalDate(value);
-  if(!d) return null;
+
+  const d =
+    parseLocalDate(value);
+
+  if(!d){
+    return null;
+  }
+
   const today = new Date();
+
   today.setHours(0,0,0,0);
+
   d.setHours(0,0,0,0);
-  return Math.round((d-today)/86400000);
+
+  return Math.round(
+    (d - today) / 86400000
+  );
+
 }
+
 
 function formatDate(value){
-  const d = parseLocalDate(value);
-  if(!d) return value || 'Data não informada';
-  return d.toLocaleDateString('pt-BR',{
-    day:'2-digit', month:'2-digit', year:'numeric'
-  });
+
+  const d =
+    parseLocalDate(value);
+
+  if(!d){
+    return value || 'Data não informada';
+  }
+
+  return d.toLocaleDateString(
+    'pt-BR',
+    {
+      day:'2-digit',
+      month:'2-digit',
+      year:'numeric'
+    }
+  );
+
 }
+
+
+/* =========================================================
+   STATUS
+========================================================= */
 
 function statusFor(days){
-  if(days === null) return {kind:'normal', label:'—'};
-  if(days < 0) return {kind:'expired', label:'VENCIDO'};
-  if(days <= 10) return {kind:'warning', label:'ATENÇÃO'};
-  return {kind:'normal', label:'OK'};
+
+  if(days === null){
+
+    return {
+      kind:'normal',
+      label:'—'
+    };
+
+  }
+
+  if(days < 0){
+
+    return {
+      kind:'expired',
+      label:'VENCIDO'
+    };
+
+  }
+
+  if(days <= 10){
+
+    return {
+      kind:'warning',
+      label:'ATENÇÃO'
+    };
+
+  }
+
+  return {
+    kind:'normal',
+    label:'OK'
+  };
+
 }
+
 
 function daysText(days){
-  if(days === null) return '';
-  if(days < 0){
-    const n = Math.abs(days);
-    return n === 1 ? 'Vencido há 1 dia' : `Vencido há ${n} dias`;
+
+  if(days === null){
+    return '';
   }
-  if(days === 0) return 'Vence hoje';
-  if(days === 1) return 'Falta 1 dia';
+
+  if(days < 0){
+
+    const n =
+      Math.abs(days);
+
+    return n === 1
+      ? 'Vencido há 1 dia'
+      : `Vencido há ${n} dias`;
+
+  }
+
+  if(days === 0){
+    return 'Vence hoje';
+  }
+
+  if(days === 1){
+    return 'Falta 1 dia';
+  }
+
   return `Faltam ${days} dias`;
+
 }
+
+
+/* =========================================================
+   LOJA
+========================================================= */
 
 function getStore(record){
-  return record.loja || record.lojaNome || record.store || record.estabelecimento || '';
+
+  return (
+    record.loja ||
+    record.lojaNome ||
+    record.store ||
+    record.estabelecimento ||
+    record.loja_nome ||
+    ''
+  );
+
 }
 
-function dedupe(list){
-  const seen = new Set();
-  return list.filter(r => {
-    const key = `${normalizeCode(r.codigo)}|${r.validade || ''}`;
-    if(seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
-}
 
-function matches(record, term){
-  if(!term) return true;
-  const q = term.toLowerCase();
-  return `${getProductName(record)} ${record.codigo || ''} ${getStore(record)}`
-    .toLowerCase().includes(q);
-}
+/* =========================================================
+   BUSCAR VALIDADES NO SUPABASE
+========================================================= */
 
-function voltarAoLeitor(){
-  // O leitor fica no mesmo diretório desta tela.
-  window.location.assign('./leitor.html');
-}
+async function carregarValidades(){
 
-let selectedRecordKey = null;
+  const list =
+    document.getElementById('list');
 
-function recordKey(record){
-  return `${normalizeCode(record.codigo)}|${record.validade || ''}|${record.nome || ''}`;
-}
+  const summary =
+    document.getElementById('summary');
 
-function openRecord(record){
-  selectedRecordKey = recordKey(record);
-  document.getElementById('modalProduct').textContent = `${getProductName(record)} • ${record.codigo || ''}`;
-  document.getElementById('modalDate').value = record.validade || '';
-  document.getElementById('editModal').classList.add('open');
-}
+  list.innerHTML = `
+    <div class="empty">
+      <div class="empty-icon">◌</div>
+      <strong>Carregando...</strong>
+      <span>Buscando as validades cadastradas.</span>
+    </div>
+  `;
 
-function openRecordByKey(key){
-  const record = records.find(r => recordKey(r) === key);
-  if(record) openRecord(record);
-}
+  const dados =
+    await getSessionAndUser();
 
-function closeRecordModal(){
-  selectedRecordKey = null;
-  document.getElementById('editModal').classList.remove('open');
-}
-
-function saveEditedDate(){
-  if(!selectedRecordKey) return;
-  const newDate = document.getElementById('modalDate').value;
-  if(!newDate){ alert('Informe uma data de validade.'); return; }
-
-  const index = records.findIndex(r => recordKey(r) === selectedRecordKey);
-  if(index < 0){ closeRecordModal(); render(); return; }
-
-  const current = records[index];
-  const duplicate = records.some((r,i) => i !== index && normalizeCode(r.codigo) === normalizeCode(current.codigo) && r.validade === newDate);
-  if(duplicate){ alert('Essa validade já está cadastrada para este produto.'); return; }
-
-  records[index].validade = newDate;
-  try{
-    localStorage.setItem(KEY, JSON.stringify(records));
-    closeRecordModal();
-    render();
-  }catch(e){
-    console.error(e);
-    alert('Não foi possível salvar a alteração.');
-  }
-}
-
-function deleteRecord(){
-  if(!selectedRecordKey) return;
-  const index = records.findIndex(r => recordKey(r) === selectedRecordKey);
-  if(index < 0){ closeRecordModal(); render(); return; }
-  const record = records[index];
-  if(!confirm(`Excluir a validade de ${getProductName(record)}?`)) return;
-
-  records.splice(index,1);
-  try{
-    localStorage.setItem(KEY, JSON.stringify(records));
-    closeRecordModal();
-    render();
-  }catch(e){
-    console.error(e);
-    alert('Não foi possível excluir o registro.');
-  }
-}
-
-function render(){
-  const list = document.getElementById('list');
-  const summary = document.getElementById('summary');
-  const term = document.getElementById('searchInput').value.trim();
-
-  let data = dedupe(records)
-    .filter(r => matches(r, term))
-    .sort((a,b) => {
-      const da = daysUntil(a.validade);
-      const db = daysUntil(b.validade);
-      if(da === null) return 1;
-      if(db === null) return -1;
-      return da-db;
-    });
-
-  summary.textContent = term
-    ? `${data.length} ${data.length === 1 ? 'registro encontrado' : 'registros encontrados'}`
-    : `${data.length} ${data.length === 1 ? 'registro' : 'registros'}`;
-
-  if(!data.length){
-    list.innerHTML = `
-      <div class="empty">
-        <div class="empty-icon">◌</div>
-        <strong>Nenhuma validade cadastrada</strong>
-        <span>As validades adicionadas no cadastro aparecerão aqui.</span>
-      </div>`;
+  if(!dados){
     return;
   }
 
-  list.innerHTML = data.map(record => {
-    const days = daysUntil(record.validade);
-    const st = statusFor(days);
-    const img = getPhoto(record);
-    const store = getStore(record);
+  currentLojaId =
+    dados.usuario.loja_id;
 
-    return `
-      <article class="item" role="button" tabindex="0" data-record-key="${escapeHtml(recordKey(record))}" onclick="openRecordByKey(this.dataset.recordKey)" onkeydown="if(event.key==='Enter'||event.key===' ')openRecordByKey(this.dataset.recordKey)">
-        <div class="photo">
-          ${img
-            ? `<img src="${img}" alt="">`
-            : `<span>□</span>`}
-        </div>
 
-        <div class="info">
-          <div class="topline">
-            <div class="date">${formatDate(record.validade)}</div>
-            <div class="status ${st.kind}">${st.label}</div>
-          </div>
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from('validades')
+    .select(`
+      id,
+      validade,
+      produto_id,
+      loja_id,
+      cadastrado_por,
+      produtos (
+        id,
+        codigo_barras,
+        nome,
+        foto_url,
+        ativo
+      )
+    `)
+    .eq(
+      'loja_id',
+      currentLojaId
+    )
+    .order(
+      'validade',
+      {
+        ascending:true
+      }
+    );
 
-          <div class="name">${escapeHtml(getProductName(record))}</div>
-          <div class="code">${escapeHtml(record.codigo || '')}</div>
-          ${store ? `<div class="store">Loja: ${escapeHtml(store)}</div>` : ''}
-          ${days !== null ? `<div class="days ${st.kind}">${daysText(days)}</div>` : ''}
-        </div>
-      </article>`;
-  }).join('');
+
+  if(error){
+
+    console.error(
+      'Erro ao carregar validades:',
+      error
+    );
+
+    summary.textContent = '';
+
+    list.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">⚠</div>
+
+        <strong>
+          Não foi possível carregar as validades
+        </strong>
+
+        <span>
+          ${escapeHtml(error.message || 'Erro desconhecido')}
+        </span>
+      </div>
+    `;
+
+    return;
+  }
+
+
+  records =
+    (data || []).map(row => {
+
+      const produto =
+        row.produtos || {};
+
+      return {
+
+        id: row.id,
+
+        produto_id:
+          row.produto_id,
+
+        loja_id:
+          row.loja_id,
+
+        validade:
+          row.validade,
+
+        cadastrado_por:
+          row.cadastrado_por,
+
+        codigo:
+          produto.codigo_barras || '',
+
+        nome:
+          produto.nome || 'Produto sem nome',
+
+        foto_url:
+          produto.foto_url || ''
+
+      };
+
+    });
+
+
+  render();
+
 }
 
+
+/* =========================================================
+   PESQUISA
+========================================================= */
+
+function matches(record, term){
+
+  if(!term){
+    return true;
+  }
+
+  const q =
+    term.toLowerCase();
+
+  return `
+    ${getProductName(record)}
+    ${record.codigo || ''}
+    ${getStore(record)}
+  `
+  .toLowerCase()
+  .includes(q);
+
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+function openRecord(record){
+
+  selectedRecordId =
+    record.id;
+
+  document.getElementById(
+    'modalProduct'
+  ).textContent =
+    `${getProductName(record)} • ${record.codigo || ''}`;
+
+  document.getElementById(
+    'modalDate'
+  ).value =
+    record.validade || '';
+
+  document.getElementById(
+    'editModal'
+  ).classList.add('open');
+
+}
+
+
+function openRecordById(id){
+
+  const record =
+    records.find(
+      r => String(r.id) === String(id)
+    );
+
+  if(record){
+    openRecord(record);
+  }
+
+}
+
+
+function closeRecordModal(){
+
+  selectedRecordId = null;
+
+  document.getElementById(
+    'editModal'
+  ).classList.remove('open');
+
+}
+
+
+/* =========================================================
+   EDITAR VALIDADE
+========================================================= */
+
+async function saveEditedDate(){
+
+  if(!selectedRecordId){
+    return;
+  }
+
+  const newDate =
+    document.getElementById(
+      'modalDate'
+    ).value;
+
+  if(!newDate){
+
+    alert(
+      'Informe uma data de validade.'
+    );
+
+    return;
+  }
+
+
+  const current =
+    records.find(
+      r =>
+        String(r.id) ===
+        String(selectedRecordId)
+    );
+
+  if(!current){
+
+    closeRecordModal();
+
+    return;
+  }
+
+
+  const duplicate =
+    records.some(
+      r =>
+        String(r.id) !==
+          String(current.id) &&
+        String(r.produto_id) ===
+          String(current.produto_id) &&
+        r.validade === newDate
+    );
+
+
+  if(duplicate){
+
+    alert(
+      'Essa validade já está cadastrada para este produto.'
+    );
+
+    return;
+  }
+
+
+  const {
+    error
+  } = await supabaseClient
+    .from('validades')
+    .update({
+      validade:newDate
+    })
+    .eq(
+      'id',
+      current.id
+    )
+    .eq(
+      'loja_id',
+      current.loja_id
+    );
+
+
+  if(error){
+
+    console.error(
+      'Erro ao editar validade:',
+      error
+    );
+
+    alert(
+      'Não foi possível salvar a alteração.\n\n' +
+      error.message
+    );
+
+    return;
+  }
+
+
+  current.validade =
+    newDate;
+
+  closeRecordModal();
+
+  render();
+
+}
+
+
+/* =========================================================
+   EXCLUIR VALIDADE
+========================================================= */
+
+async function deleteRecord(){
+
+  if(!selectedRecordId){
+    return;
+  }
+
+  const record =
+    records.find(
+      r =>
+        String(r.id) ===
+        String(selectedRecordId)
+    );
+
+  if(!record){
+
+    closeRecordModal();
+
+    return;
+  }
+
+
+  if(
+    !confirm(
+      `Excluir a validade de ${getProductName(record)}?`
+    )
+  ){
+
+    return;
+  }
+
+
+  const {
+    error
+  } = await supabaseClient
+    .from('validades')
+    .delete()
+    .eq(
+      'id',
+      record.id
+    )
+    .eq(
+      'loja_id',
+      record.loja_id
+    );
+
+
+  if(error){
+
+    console.error(
+      'Erro ao excluir validade:',
+      error
+    );
+
+    alert(
+      'Não foi possível excluir o registro.\n\n' +
+      error.message
+    );
+
+    return;
+  }
+
+
+  records =
+    records.filter(
+      r =>
+        String(r.id) !==
+        String(record.id)
+    );
+
+
+  closeRecordModal();
+
+  render();
+
+}
+
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function render(){
+
+  const list =
+    document.getElementById('list');
+
+  const summary =
+    document.getElementById('summary');
+
+  const term =
+    document.getElementById(
+      'searchInput'
+    ).value.trim();
+
+
+  let data =
+    records
+      .filter(
+        r =>
+          matches(r, term)
+      )
+      .sort(
+        (a,b) => {
+
+          const da =
+            daysUntil(a.validade);
+
+          const db =
+            daysUntil(b.validade);
+
+          if(da === null){
+            return 1;
+          }
+
+          if(db === null){
+            return -1;
+          }
+
+          return da - db;
+
+        }
+      );
+
+
+  summary.textContent =
+    term
+      ? `${data.length} ${
+          data.length === 1
+            ? 'registro encontrado'
+            : 'registros encontrados'
+        }`
+      : `${data.length} ${
+          data.length === 1
+            ? 'registro'
+            : 'registros'
+        }`;
+
+
+  if(!data.length){
+
+    list.innerHTML = `
+      <div class="empty">
+
+        <div class="empty-icon">
+          ◌
+        </div>
+
+        <strong>
+          Nenhuma validade cadastrada
+        </strong>
+
+        <span>
+          As validades adicionadas no cadastro aparecerão aqui.
+        </span>
+
+      </div>
+    `;
+
+    return;
+  }
+
+
+  list.innerHTML =
+    data.map(record => {
+
+      const days =
+        daysUntil(
+          record.validade
+        );
+
+      const st =
+        statusFor(days);
+
+      const img =
+        getPhoto(record);
+
+      const store =
+        getStore(record);
+
+
+      return `
+        <article
+          class="item"
+          role="button"
+          tabindex="0"
+          data-record-id="${escapeHtml(record.id)}"
+          onclick="openRecordById(this.dataset.recordId)"
+          onkeydown="
+            if(event.key==='Enter'||event.key===' ')
+              openRecordById(this.dataset.recordId)
+          "
+        >
+
+          <div class="photo">
+
+            ${
+              img
+                ? `<img src="${escapeHtml(img)}" alt="">`
+                : `<span>□</span>`
+            }
+
+          </div>
+
+
+          <div class="info">
+
+            <div class="topline">
+
+              <div class="date">
+                ${formatDate(record.validade)}
+              </div>
+
+              <div class="status ${st.kind}">
+                ${st.label}
+              </div>
+
+            </div>
+
+
+            <div class="name">
+              ${escapeHtml(
+                getProductName(record)
+              )}
+            </div>
+
+
+            <div class="code">
+              ${escapeHtml(
+                record.codigo || ''
+              )}
+            </div>
+
+
+            ${
+              store
+                ? `
+                  <div class="store">
+                    Loja: ${escapeHtml(store)}
+                  </div>
+                `
+                : ''
+            }
+
+
+            ${
+              days !== null
+                ? `
+                  <div class="days ${st.kind}">
+                    ${daysText(days)}
+                  </div>
+                `
+                : ''
+            }
+
+          </div>
+
+        </article>
+      `;
+
+    }).join('');
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
 function escapeHtml(value){
+
   return String(value ?? '')
     .replace(/&/g,'&amp;')
     .replace(/</g,'&lt;')
     .replace(/>/g,'&gt;')
     .replace(/"/g,'&quot;')
     .replace(/'/g,'&#039;');
+
 }
 
-document.getElementById('searchBtn').addEventListener('click',()=>{
-  const wrap = document.getElementById('searchWrap');
-  wrap.classList.toggle('open');
-  if(wrap.classList.contains('open')){
-    document.getElementById('searchInput').focus();
-  }else{
-    document.getElementById('searchInput').value='';
-    render();
-  }
-});
 
-document.getElementById('searchInput').addEventListener('input',render);
+/* =========================================================
+   PESQUISA
+========================================================= */
 
-window.addEventListener('storage',()=>{
-  records = JSON.parse(localStorage.getItem(KEY) || '[]');
-  Object.assign(photoMap, JSON.parse(localStorage.getItem(PHOTOS) || '{}'));
-  render();
-});
+document
+  .getElementById('searchBtn')
+  .addEventListener(
+    'click',
+    () => {
 
-document.getElementById('modalSave').addEventListener('click', saveEditedDate);
-document.getElementById('modalDelete').addEventListener('click', deleteRecord);
-document.getElementById('modalClose').addEventListener('click', closeRecordModal);
-document.getElementById('editModal').addEventListener('click', e => {
-  if(e.target.id === 'editModal') closeRecordModal();
-});
+      const wrap =
+        document.getElementById(
+          'searchWrap'
+        );
 
-render();
+      wrap.classList.toggle(
+        'open'
+      );
+
+
+      if(
+        wrap.classList.contains('open')
+      ){
+
+        document
+          .getElementById(
+            'searchInput'
+          )
+          .focus();
+
+      }else{
+
+        document
+          .getElementById(
+            'searchInput'
+          )
+          .value = '';
+
+        render();
+
+      }
+
+    }
+  );
+
+
+document
+  .getElementById('searchInput')
+  .addEventListener(
+    'input',
+    render
+  );
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+document
+  .getElementById('modalSave')
+  .addEventListener(
+    'click',
+    saveEditedDate
+  );
+
+
+document
+  .getElementById('modalDelete')
+  .addEventListener(
+    'click',
+    deleteRecord
+  );
+
+
+document
+  .getElementById('modalClose')
+  .addEventListener(
+    'click',
+    closeRecordModal
+  );
+
+
+document
+  .getElementById('editModal')
+  .addEventListener(
+    'click',
+    e => {
+
+      if(
+        e.target.id ===
+        'editModal'
+      ){
+
+        closeRecordModal();
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   LEITOR
+========================================================= */
+
+function voltarAoLeitor(){
+
+  window.location.assign(
+    './leitor.html'
+  );
+
+}
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
+
+(async function iniciar(){
+
+  await carregarConta();
+
+  await carregarValidades();
+
+})();
+
 </script>
+
 </body>
 </html>
