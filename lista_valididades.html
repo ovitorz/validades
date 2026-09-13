@@ -76,6 +76,55 @@
     color:#555;
   }
   .icon-btn:active{background:#e9e9e6}
+
+  .account-wrap{
+    display:none;
+    padding:10px 16px 12px;
+    background:var(--bg);
+  }
+  .account-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:13px 14px;
+    box-shadow:0 1px 2px rgba(0,0,0,.025);
+  }
+  .account-label{
+    font-size:11px;
+    color:var(--muted);
+    margin-bottom:7px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.3px;
+  }
+  .account-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:13px;
+    line-height:1.5;
+  }
+  .account-row + .account-row{margin-top:3px}
+  .account-icon{width:18px;text-align:center;color:#777}
+  .account-value{
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .account-logout{
+    margin-top:10px;
+    width:100%;
+    height:40px;
+    border:0;
+    border-radius:11px;
+    background:#222;
+    color:#fff;
+    font-size:12px;
+    font-weight:800;
+    cursor:pointer;
+  }
+
   .search-wrap{
     display:none;
     padding:0 16px 10px;
@@ -240,9 +289,25 @@
       <h1>Validades</h1>
     </div>
     <div class="header-actions">
+      <button class="icon-btn" id="accountBtn" aria-label="Sua conta" title="Sua conta">◉</button>
       <button class="icon-btn" id="searchBtn" aria-label="Pesquisar" title="Pesquisar">⌕</button>
     </div>
   </header>
+
+  <div class="account-wrap" id="accountWrap">
+    <div class="account-card">
+      <div class="account-label">Sua conta</div>
+      <div class="account-row">
+        <span class="account-icon">✉</span>
+        <span class="account-value" id="accountEmail">Carregando...</span>
+      </div>
+      <div class="account-row">
+        <span class="account-icon">⌂</span>
+        <span class="account-value" id="accountStore">Carregando loja...</span>
+      </div>
+      <button class="account-logout" id="logoutBtn" type="button">SAIR</button>
+    </div>
+  </div>
 
   <div class="search-wrap" id="searchWrap">
     <input class="search" id="searchInput" type="search"
@@ -291,6 +356,69 @@ const supabaseClient = window.supabase.createClient(
 </script>
 
 <script>
+async function carregarConta(){
+  const emailEl = document.getElementById('accountEmail');
+  const storeEl = document.getElementById('accountStore');
+
+  const { data: sessionData, error: sessionError } =
+    await supabaseClient.auth.getSession();
+
+  if(sessionError || !sessionData.session){
+    window.location.replace('login.html');
+    return;
+  }
+
+  emailEl.textContent = sessionData.session.user.email || 'E-mail não informado';
+
+  const { data: usuario, error: usuarioError } = await supabaseClient
+    .from('usuarios')
+    .select('loja_id')
+    .eq('auth_user_id', sessionData.session.user.id)
+    .maybeSingle();
+
+  if(usuarioError){
+    console.error('Erro ao buscar usuário:', usuarioError);
+    storeEl.textContent = 'Loja não identificada';
+    return;
+  }
+
+  if(!usuario || !usuario.loja_id){
+    storeEl.textContent = 'Loja não vinculada';
+    return;
+  }
+
+  const { data: loja, error: lojaError } = await supabaseClient
+    .from('lojas')
+    .select('nome')
+    .eq('id', usuario.loja_id)
+    .maybeSingle();
+
+  if(lojaError){
+    console.error('Erro ao buscar loja:', lojaError);
+    storeEl.textContent = 'Loja não identificada';
+    return;
+  }
+
+  storeEl.textContent = loja?.nome ? `Loja: ${loja.nome}` : 'Loja não identificada';
+}
+
+document.getElementById('accountBtn').addEventListener('click',()=>{
+  const wrap = document.getElementById('accountWrap');
+  wrap.style.display = wrap.style.display === 'block' ? 'none' : 'block';
+});
+
+document.getElementById('logoutBtn').addEventListener('click', async ()=>{
+  const { error } = await supabaseClient.auth.signOut();
+  if(error){
+    console.error(error);
+    alert('Não foi possível sair. Tente novamente.');
+    return;
+  }
+  window.location.replace('login.html');
+});
+
+carregarConta();
+
 const KEY = 'validades_v2';
 const PHOTOS = 'fotos_produtos_v2';
 
