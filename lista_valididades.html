@@ -1350,8 +1350,16 @@ function configurarAcesso(dados){
   const storeRow=document.getElementById('storeFilterRow');
   const employeeRow=document.getElementById('employeeFilterRow');
   const badge=document.getElementById('accessBadge');
+  const dashboardBtn=document.getElementById('dashboardBtn');
 
   badge.textContent = `Acesso: ${nomePerfil(dados.usuario.perfil)}`;
+
+  // Dashboard exclusivo para perfis gerenciais.
+  if(['gerente','gerente_geral','admin_global'].includes(dados.usuario.perfil)){
+    dashboardBtn.classList.add('visible');
+  }else{
+    dashboardBtn.classList.remove('visible');
+  }
 
   // Funcionário: somente os próprios registros. O RLS já garante isso.
   if(dados.usuario.perfil === 'funcionario'){
