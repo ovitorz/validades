@@ -91,6 +91,29 @@ button{-webkit-tap-highlight-color:transparent}
 </div>
 <a class="fab-lista" href="lista_valididades.html" aria-label="Ver lista de validades" title="Ver lista">☷</a>
 
+<!-- Verificação de sessão -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://siuvsahkjfyzdcrskleg.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_At--bKaS3ZiZA0dmyN5FIQ_5WF735Nl';
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+(async function verificarSessao(){
+  const { data, error } = await supabaseClient.auth.getSession();
+
+  if(error || !data.session){
+    window.location.replace('login.html');
+    return;
+  }
+
+  // Sessão válida: libera o leitor.
+  window.dispatchEvent(new Event('sessao-validada'));
+})();
+</script>
+
 <!-- Motor rápido e compatível com Android/iPhone -->
 <script src="https://unpkg.com/@zxing/browser@0.2.1"></script>
 <script>
@@ -281,7 +304,11 @@ manualCode.addEventListener("keydown",e=>{
   }
 });
 
-window.addEventListener("load",()=>iniciarCamera());
+window.addEventListener("load",()=>{
+  supabaseClient.auth.getSession().then(({data,error})=>{
+    if(!error && data.session) iniciarCamera();
+  });
+});
 
 // Se o usuário voltar para o navegador, liga novamente automaticamente.
 document.addEventListener("visibilitychange",()=>{
