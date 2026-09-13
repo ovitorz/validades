@@ -361,7 +361,7 @@ function renderProduct(){
         </select>
       </div>` : ''}
     <div class="photo-actions"><span class="muted">${savedPhoto?'Foto cadastrada':'Sem foto'}</span><label class="photo-btn" for="photo">📷 ${savedPhoto?'Trocar foto':'Adicionar foto'}</label><input id="photo" class="hidden" type="file" accept="image/*" capture="environment"></div>
-    <button id="saveBtn" class="save" type="button" onclick="registerProduct()">SALVAR PRODUTO</button>
+    <button id="saveBtn" class="save" type="button" onclick="registerProduct()">${isNew ? "SALVAR PRODUTO" : "SALVAR VALIDADE"}</button>
     <button class="cancel" type="button" onclick="cancelProduct()">Cancelar</button>`;
   const date=$('date');
   if(isNew) $('newName').focus(); else date.focus();
@@ -373,8 +373,9 @@ async function registerProduct(){
     if(!selected) { msg('Nenhum produto selecionado.','err'); return; }
     const dateEl=$('date');
     const date=dateEl ? dateEl.value : '';
+    const isNew=!selected.nome;
     const name=selected.nome || (($('newName') && $('newName').value) || '').trim();
-    if(!name){ msg('Digite o nome do produto.','err'); if($('newName')) $('newName').focus(); return; }
+    if(isNew && !name){ msg('Digite o nome do produto.','err'); if($('newName')) $('newName').focus(); return; }
     if(!date){ msg('Informe a validade.','err'); if(dateEl) dateEl.focus(); return; }
 
     let lojaId = currentUsuario ? currentUsuario.loja_id : null;
@@ -471,7 +472,7 @@ async function registerProduct(){
     if(existenteError) throw new Error('Não foi possível verificar a validade: '+existenteError.message);
     if(existente){
       msg('Essa validade já foi cadastrada para este produto nesta loja.','err');
-      if(saveBtn){ saveBtn.disabled=false; saveBtn.textContent='SALVAR PRODUTO'; }
+      if(saveBtn){ saveBtn.disabled=false; saveBtn.textContent=(selected && !selected.nome)?'SALVAR PRODUTO':'SALVAR VALIDADE'; }
       return;
     }
 
@@ -509,7 +510,7 @@ async function registerProduct(){
     console.error('ERRO AO SALVAR NO SUPABASE:',e);
     msg('Erro ao salvar: '+(e.message||'verifique as permissões da tabela.'),'err');
     const saveBtn=$('saveBtn');
-    if(saveBtn){ saveBtn.disabled=false; saveBtn.textContent='SALVAR PRODUTO'; }
+    if(saveBtn){ saveBtn.disabled=false; saveBtn.textContent=(selected && !selected.nome)?'SALVAR PRODUTO':'SALVAR VALIDADE'; }
   }
 }
 function openFromUrl(){
