@@ -99,6 +99,7 @@
     cursor:pointer;-webkit-tap-highlight-color:transparent;
   }
   .item:active{transform:scale(.995)}
+  .item{content-visibility:auto;contain-intrinsic-size:92px}
   .item::after{
     content:'›';align-self:center;color:#aaa;font-size:22px;padding-left:2px
   }
@@ -289,56 +290,49 @@ const supabaseClient = window.supabase.createClient(
    SESSÃO
 ========================================================= */
 
+let sessionUserPromise=null;
+
 async function getSessionAndUser(){
+  if(sessionUserPromise) return sessionUserPromise;
 
-  const {
-    data: sessionData,
-    error: sessionError
-  } = await supabaseClient.auth.getSession();
+  sessionUserPromise=(async()=>{
+    const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
 
-  if(sessionError){
-    console.error('Erro ao verificar sessão:', sessionError);
-    window.location.replace('login.html');
-    return null;
-  }
+    if(sessionError){
+      console.error('Erro ao verificar sessão:',sessionError);
+      window.location.replace('login.html');
+      return null;
+    }
+    if(!sessionData.session){
+      window.location.replace('login.html');
+      return null;
+    }
 
-  if(!sessionData.session){
-    window.location.replace('login.html');
-    return null;
-  }
+    const authUser=sessionData.session.user;
+    const {data:usuario,error:usuarioError}=await supabaseClient
+      .from('usuarios')
+      .select('id,auth_user_id,loja_id')
+      .eq('auth_user_id',authUser.id)
+      .maybeSingle();
 
-  const authUser = sessionData.session.user;
+    if(usuarioError){
+      console.error('Erro ao buscar usuário:',usuarioError);
+      alert('Não foi possível identificar seu usuário.');
+      return null;
+    }
+    if(!usuario){
+      alert('Usuário não encontrado na tabela usuarios.');
+      return null;
+    }
+    if(!usuario.loja_id){
+      alert('Seu usuário ainda não possui uma loja vinculada.');
+      return null;
+    }
 
-  const {
-    data: usuario,
-    error: usuarioError
-  } = await supabaseClient
-    .from('usuarios')
-    .select('id, auth_user_id, loja_id')
-    .eq('auth_user_id', authUser.id)
-    .maybeSingle();
+    return {session:sessionData.session,authUser,usuario};
+  })();
 
-  if(usuarioError){
-    console.error('Erro ao buscar usuário:', usuarioError);
-    alert('Não foi possível identificar seu usuário.');
-    return null;
-  }
-
-  if(!usuario){
-    alert('Usuário não encontrado na tabela usuarios.');
-    return null;
-  }
-
-  if(!usuario.loja_id){
-    alert('Seu usuário ainda não possui uma loja vinculada.');
-    return null;
-  }
-
-  return {
-    session: sessionData.session,
-    authUser,
-    usuario
-  };
+  return sessionUserPromise;
 }
 
 
@@ -756,41 +750,28 @@ async function carregarValidades(){
   }
 
 
-  records =
-    (data || []).map(row => {
+  records=(data || []).map(row=>{
+    const produto=row.produtos || {};
+    const codigo=produto.codigo_barras || '';
+    const nome=produto.nome || 'Produto sem nome';
+    const validade=row.validade || null;
+    const days=daysUntil(validade);
 
-      const produto =
-        row.produtos || {};
-
-      return {
-
-        id: row.id,
-
-        produto_id:
-          row.produto_id,
-
-        loja_id:
-          row.loja_id,
-
-        validade:
-          row.validade,
-
-        cadastrado_por:
-          row.cadastrado_por,
-
-        codigo:
-          produto.codigo_barras || '',
-
-        nome:
-          produto.nome || 'Produto sem nome',
-
-        foto_url:
-          produto.foto_url || ''
-
-      };
-
-    });
-
+    return {
+      id:row.id,
+      produto_id:row.produto_id,
+      loja_id:row.loja_id,
+      validade,
+      cadastrado_por:row.cadastrado_por,
+      codigo,
+      nome,
+      foto_url:produto.foto_url || '',
+      _search:(nome+' '+codigo).toLowerCase(),
+      _days:days,
+      _date:formatDate(validade),
+      _status:statusFor(days)
+    };
+  });
 
   render();
 
@@ -801,23 +782,9 @@ async function carregarValidades(){
    PESQUISA
 ========================================================= */
 
-function matches(record, term){
-
-  if(!term){
-    return true;
-  }
-
-  const q =
-    term.toLowerCase();
-
-  return `
-    ${getProductName(record)}
-    ${record.codigo || ''}
-    ${getStore(record)}
-  `
-  .toLowerCase()
-  .includes(q);
-
+function matches(record,term){
+  if(!term) return true;
+  return record._search.includes(term);
 }
 
 
@@ -966,8 +933,10 @@ async function saveEditedDate(){
   }
 
 
-  current.validade =
-    newDate;
+  current.validade=newDate;
+  current._days=daysUntil(newDate);
+  current._date=formatDate(newDate);
+  current._status=statusFor(current._days);
 
   closeRecordModal();
 
@@ -1062,186 +1031,70 @@ async function deleteRecord(){
 ========================================================= */
 
 function render(){
+  const list=document.getElementById('list');
+  const summary=document.getElementById('summary');
+  const term=document.getElementById('searchInput').value.trim().toLowerCase();
 
-  const list =
-    document.getElementById('list');
+  const data=records
+    .filter(r=>matches(r,term))
+    .slice()
+    .sort((a,b)=>{
+      const da=a._days, db=b._days;
+      if(da===null) return 1;
+      if(db===null) return -1;
+      return da-db;
+    });
 
-  const summary =
-    document.getElementById('summary');
-
-  const term =
-    document.getElementById(
-      'searchInput'
-    ).value.trim();
-
-
-  let data =
-    records
-      .filter(
-        r =>
-          matches(r, term)
-      )
-      .sort(
-        (a,b) => {
-
-          const da =
-            daysUntil(a.validade);
-
-          const db =
-            daysUntil(b.validade);
-
-          if(da === null){
-            return 1;
-          }
-
-          if(db === null){
-            return -1;
-          }
-
-          return da - db;
-
-        }
-      );
-
-
-  summary.textContent =
-    term
-      ? `${data.length} ${
-          data.length === 1
-            ? 'registro encontrado'
-            : 'registros encontrados'
-        }`
-      : `${data.length} ${
-          data.length === 1
-            ? 'registro'
-            : 'registros'
-        }`;
-
+  summary.textContent=term
+    ? `${data.length} ${data.length===1?'registro encontrado':'registros encontrados'}`
+    : `${data.length} ${data.length===1?'registro':'registros'}`;
 
   if(!data.length){
-
-    list.innerHTML = `
-      <div class="empty">
-
-        <div class="empty-icon">
-          ◌
-        </div>
-
-        <strong>
-          Nenhuma validade cadastrada
-        </strong>
-
-        <span>
-          As validades adicionadas no cadastro aparecerão aqui.
-        </span>
-
-      </div>
-    `;
-
+    list.innerHTML=`<div class="empty">
+      <div class="empty-icon">◌</div>
+      <strong>Nenhuma validade cadastrada</strong>
+      <span>As validades adicionadas no cadastro aparecerão aqui.</span>
+    </div>`;
     return;
   }
 
+  list.innerHTML=data.map(record=>{
+    const days=record._days;
+    const st=record._status;
+    const img=getPhoto(record);
+    const store=getStore(record);
 
-  list.innerHTML =
-    data.map(record => {
-
-      const days =
-        daysUntil(
-          record.validade
-        );
-
-      const st =
-        statusFor(days);
-
-      const img =
-        getPhoto(record);
-
-      const store =
-        getStore(record);
-
-
-      return `
-        <article
-          class="item"
-          role="button"
-          tabindex="0"
-          data-record-id="${escapeHtml(record.id)}"
-          onclick="openRecordById(this.dataset.recordId)"
-          onkeydown="
-            if(event.key==='Enter'||event.key===' ')
-              openRecordById(this.dataset.recordId)
-          "
-        >
-
-          <div class="photo">
-
-            ${
-              img
-                ? `<img src="${escapeHtml(img)}" alt="">`
-                : `<span>□</span>`
-            }
-
-          </div>
-
-
-          <div class="info">
-
-            <div class="topline">
-
-              <div class="date">
-                ${formatDate(record.validade)}
-              </div>
-
-              <div class="status ${st.kind}">
-                ${st.label}
-              </div>
-
-            </div>
-
-
-            <div class="name">
-              ${escapeHtml(
-                getProductName(record)
-              )}
-            </div>
-
-
-            <div class="code">
-              ${escapeHtml(
-                record.codigo || ''
-              )}
-            </div>
-
-
-            ${
-              store
-                ? `
-                  <div class="store">
-                    Loja: ${escapeHtml(store)}
-                  </div>
-                `
-                : ''
-            }
-
-
-            ${
-              days !== null
-                ? `
-                  <div class="days ${st.kind}">
-                    ${daysText(days)}
-                  </div>
-                `
-                : ''
-            }
-
-          </div>
-
-        </article>
-      `;
-
-    }).join('');
-
+    return `<article class="item" role="button" tabindex="0" data-record-id="${escapeHtml(record.id)}">
+      <div class="photo">${img
+        ? `<img src="${escapeHtml(img)}" alt="" loading="lazy" decoding="async">`
+        : `<span>□</span>`}</div>
+      <div class="info">
+        <div class="topline">
+          <div class="date">${record._date}</div>
+          <div class="status ${st.kind}">${st.label}</div>
+        </div>
+        <div class="name">${escapeHtml(record.nome)}</div>
+        <div class="code">${escapeHtml(record.codigo || '')}</div>
+        ${store ? `<div class="store">Loja: ${escapeHtml(store)}</div>` : ''}
+        ${days!==null ? `<div class="days ${st.kind}">${daysText(days)}</div>` : ''}
+      </div>
+    </article>`;
+  }).join('');
 }
+
+
+// Um único listener para toda a lista, em vez de criar handlers em cada item.
+document.getElementById('list').addEventListener('click',e=>{
+  const item=e.target.closest('.item[data-record-id]');
+  if(item) openRecordById(item.dataset.recordId);
+});
+document.getElementById('list').addEventListener('keydown',e=>{
+  if(e.key!=='Enter' && e.key!==' ') return;
+  const item=e.target.closest('.item[data-record-id]');
+  if(!item) return;
+  e.preventDefault();
+  openRecordById(item.dataset.recordId);
+});
 
 
 /* =========================================================
@@ -1306,12 +1159,11 @@ document
   );
 
 
-document
-  .getElementById('searchInput')
-  .addEventListener(
-    'input',
-    render
-  );
+let searchTimer=0;
+document.getElementById('searchInput').addEventListener('input',()=>{
+  clearTimeout(searchTimer);
+  searchTimer=setTimeout(render,80);
+});
 
 
 /* =========================================================
