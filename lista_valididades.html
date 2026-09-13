@@ -174,6 +174,54 @@
     width:100%;height:44px;border:0;background:transparent;color:#777;
     font-weight:700;margin-top:5px;cursor:pointer
   }
+  .filters-wrap{
+    display:none;
+    padding:0 16px 10px;
+    background:var(--bg);
+  }
+  .filters-wrap.open{display:block}
+  .access-badge{
+    display:inline-flex;
+    align-items:center;
+    min-height:28px;
+    padding:6px 10px;
+    margin-bottom:8px;
+    border-radius:999px;
+    background:#ececea;
+    color:#555;
+    font-size:11px;
+    font-weight:800;
+  }
+  .filter-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:7px;
+  }
+  .filter-row label{
+    flex:0 0 78px;
+    font-size:11px;
+    color:#777;
+    font-weight:800;
+  }
+  .filter-row select{
+    flex:1;
+    min-width:0;
+    height:42px;
+    border:1px solid #e2e2dd;
+    border-radius:12px;
+    background:#fff;
+    color:#333;
+    padding:0 11px;
+    font-size:13px;
+    outline:none;
+  }
+  .filter-row select:focus{
+    border-color:#bbb;
+    box-shadow:0 0 0 3px rgba(0,0,0,.05);
+  }
+  .filter-row.hidden{display:none}
+
   @media(max-width:560px){.app{max-width:none}}
 </style>
 </head>
@@ -221,6 +269,22 @@
       type="search"
       placeholder="Pesquisar produto ou código"
     >
+  </div>
+
+  <div class="filters-wrap" id="filtersWrap">
+    <div class="access-badge" id="accessBadge"></div>
+    <div class="filter-row" id="storeFilterRow">
+      <label for="storeFilter">Loja</label>
+      <select id="storeFilter">
+        <option value="">Todas as lojas</option>
+      </select>
+    </div>
+    <div class="filter-row" id="employeeFilterRow">
+      <label for="employeeFilter">Funcionário</label>
+      <select id="employeeFilter">
+        <option value="">Todos os funcionários</option>
+      </select>
+    </div>
   </div>
 
   <main class="content">
@@ -311,7 +375,7 @@ async function getSessionAndUser(){
     const authUser=sessionData.session.user;
     const {data:usuario,error:usuarioError}=await supabaseClient
       .from('usuarios')
-      .select('id,auth_user_id,loja_id')
+      .select('id,auth_user_id,loja_id,perfil,nome,ativo')
       .eq('auth_user_id',authUser.id)
       .maybeSingle();
 
@@ -324,7 +388,13 @@ async function getSessionAndUser(){
       alert('Usuário não encontrado na tabela usuarios.');
       return null;
     }
-    if(!usuario.loja_id){
+    if(usuario.ativo === false){
+      alert('Seu usuário está inativo.');
+      await supabaseClient.auth.signOut();
+      window.location.replace('login.html');
+      return null;
+    }
+    if(usuario.perfil !== 'admin_global' && !usuario.loja_id){
       alert('Seu usuário ainda não possui uma loja vinculada.');
       return null;
     }
@@ -354,6 +424,18 @@ async function carregarConta(){
   emailEl.textContent =
     dados.authUser.email || 'E-mail não informado';
 
+  const perfilLabel = {
+    funcionario:'Funcionário',
+    gerente:'Gerente',
+    gerente_geral:'Gerente geral',
+    admin_global:'Administrador global'
+  }[dados.usuario.perfil] || 'Usuário';
+
+  if(dados.usuario.perfil === 'admin_global'){
+    storeEl.textContent = `Acesso: ${perfilLabel} • Todas as lojas`;
+    return;
+  }
+
   const {
     data: loja,
     error: lojaError
@@ -364,18 +446,15 @@ async function carregarConta(){
     .maybeSingle();
 
   if(lojaError){
-
     console.error('Erro ao buscar loja:', lojaError);
-
-    storeEl.textContent = 'Loja não identificada';
-
+    storeEl.textContent = `Acesso: ${perfilLabel} • Loja não identificada`;
     return;
   }
 
   storeEl.textContent =
     loja?.nome
-      ? `Loja: ${loja.nome}`
-      : 'Loja não identificada';
+      ? `Acesso: ${perfilLabel} • Loja: ${loja.nome}`
+      : `Acesso: ${perfilLabel} • Loja não identificada`;
 }
 
 
@@ -449,6 +528,10 @@ let records = [];
 let selectedRecordId = null;
 
 let currentLojaId = null;
+let currentPerfil = null;
+let currentUsuarioId = null;
+let stores = [];
+let employees = [];
 
 
 /* =========================================================
@@ -667,11 +750,8 @@ function getStore(record){
 
 async function carregarValidades(){
 
-  const list =
-    document.getElementById('list');
-
-  const summary =
-    document.getElementById('summary');
+  const list = document.getElementById('list');
+  const summary = document.getElementById('summary');
 
   list.innerHTML = `
     <div class="empty">
@@ -681,21 +761,19 @@ async function carregarValidades(){
     </div>
   `;
 
-  const dados =
-    await getSessionAndUser();
+  const dados = await getSessionAndUser();
+  if(!dados) return;
 
-  if(!dados){
-    return;
-  }
+  currentLojaId = dados.usuario.loja_id;
+  currentPerfil = dados.usuario.perfil;
+  currentUsuarioId = dados.usuario.id;
 
-  currentLojaId =
-    dados.usuario.loja_id;
+  configurarAcesso(dados);
 
-
-  const {
-    data,
-    error
-  } = await supabaseClient
+  // O RLS do Supabase decide quais validades o usuário realmente pode ver.
+  // Por isso não filtramos loja_id aqui: gerente_geral e admin_global precisam
+  // conseguir receber registros de todas as lojas.
+  const { data, error } = await supabaseClient
     .from('validades')
     .select(`
       id,
@@ -711,44 +789,41 @@ async function carregarValidades(){
         ativo
       )
     `)
-    .eq(
-      'loja_id',
-      currentLojaId
-    )
-    .order(
-      'validade',
-      {
-        ascending:true
-      }
-    );
-
+    .order('validade', {ascending:true});
 
   if(error){
-
-    console.error(
-      'Erro ao carregar validades:',
-      error
-    );
-
+    console.error('Erro ao carregar validades:',error);
     summary.textContent = '';
-
     list.innerHTML = `
       <div class="empty">
         <div class="empty-icon">⚠</div>
-
-        <strong>
-          Não foi possível carregar as validades
-        </strong>
-
-        <span>
-          ${escapeHtml(error.message || 'Erro desconhecido')}
-        </span>
+        <strong>Não foi possível carregar as validades</strong>
+        <span>${escapeHtml(error.message || 'Erro desconhecido')}</span>
       </div>
     `;
-
     return;
   }
 
+  // Busca os nomes usados nos filtros. São consultas separadas para não
+  // depender de relacionamentos FK configurados no Supabase.
+  const [lojasResult, usuariosResult] = await Promise.all([
+    supabaseClient.from('lojas').select('id,nome,ativo').order('nome'),
+    supabaseClient.from('usuarios').select('id,nome,email,loja_id,perfil,ativo').order('nome')
+  ]);
+
+  stores = !lojasResult.error ? (lojasResult.data || []) : [];
+  employees = !usuariosResult.error ? (usuariosResult.data || []) : [];
+
+  if(lojasResult.error) console.warn('Não foi possível carregar lojas para o filtro:',lojasResult.error);
+  if(usuariosResult.error) console.warn('Não foi possível carregar funcionários para o filtro:',usuariosResult.error);
+
+  preencherFiltros();
+
+  const storeMap = new Map(stores.map(s => [String(s.id), s.nome || `Loja ${s.id}`]));
+  const employeeMap = new Map(employees.map(u => [
+    String(u.id),
+    u.nome || u.email || `Usuário ${u.id}`
+  ]));
 
   records=(data || []).map(row=>{
     const produto=row.produtos || {};
@@ -761,11 +836,13 @@ async function carregarValidades(){
       id:row.id,
       produto_id:row.produto_id,
       loja_id:row.loja_id,
-      validade,
       cadastrado_por:row.cadastrado_por,
+      validade,
       codigo,
       nome,
       foto_url:produto.foto_url || '',
+      loja_nome:storeMap.get(String(row.loja_id)) || '',
+      cadastrado_por_nome:employeeMap.get(String(row.cadastrado_por)) || '',
       _search:(nome+' '+codigo).toLowerCase(),
       _days:days,
       _date:formatDate(validade),
@@ -774,9 +851,123 @@ async function carregarValidades(){
   });
 
   render();
-
 }
 
+
+/* =========================================================
+   ACESSO / FILTROS
+========================================================= */
+
+function nomePerfil(perfil){
+  return {
+    funcionario:'Funcionário',
+    gerente:'Gerente',
+    gerente_geral:'Gerente geral',
+    admin_global:'Administrador global'
+  }[perfil] || 'Usuário';
+}
+
+function configurarAcesso(dados){
+  const filtersWrap=document.getElementById('filtersWrap');
+  const storeRow=document.getElementById('storeFilterRow');
+  const employeeRow=document.getElementById('employeeFilterRow');
+  const badge=document.getElementById('accessBadge');
+
+  badge.textContent = `Acesso: ${nomePerfil(dados.usuario.perfil)}`;
+
+  // Funcionário: somente os próprios registros. O RLS já garante isso.
+  if(dados.usuario.perfil === 'funcionario'){
+    filtersWrap.classList.remove('open');
+    storeRow.classList.add('hidden');
+    employeeRow.classList.add('hidden');
+    return;
+  }
+
+  filtersWrap.classList.add('open');
+
+  if(dados.usuario.perfil === 'gerente'){
+    storeRow.classList.add('hidden');
+    employeeRow.classList.remove('hidden');
+  }else if(dados.usuario.perfil === 'gerente_geral'){
+    storeRow.classList.remove('hidden');
+    employeeRow.classList.add('hidden');
+  }else if(dados.usuario.perfil === 'admin_global'){
+    storeRow.classList.remove('hidden');
+    employeeRow.classList.remove('hidden');
+  }else{
+    storeRow.classList.add('hidden');
+    employeeRow.classList.add('hidden');
+  }
+}
+
+function preencherFiltros(){
+  const storeFilter=document.getElementById('storeFilter');
+  const employeeFilter=document.getElementById('employeeFilter');
+
+  const storeValue=storeFilter.value;
+  const employeeValue=employeeFilter.value;
+
+  storeFilter.innerHTML='<option value="">Todas as lojas</option>';
+  employeeFilter.innerHTML='<option value="">Todos os funcionários</option>';
+
+  const lojasAtivas = stores.filter(s => s.ativo !== false);
+  lojasAtivas.forEach(loja=>{
+    const option=document.createElement('option');
+    option.value=String(loja.id);
+    option.textContent=loja.nome || `Loja ${loja.id}`;
+    storeFilter.appendChild(option);
+  });
+
+  employees
+    .filter(u => u.ativo !== false && ['funcionario','gerente'].includes(u.perfil))
+    .forEach(u=>{
+      const option=document.createElement('option');
+      option.value=String(u.id);
+      option.textContent=u.nome || u.email || `Usuário ${u.id}`;
+      employeeFilter.appendChild(option);
+    });
+
+  if([...storeFilter.options].some(o=>o.value===storeValue)) storeFilter.value=storeValue;
+  if([...employeeFilter.options].some(o=>o.value===employeeValue)) employeeFilter.value=employeeValue;
+}
+
+function filtroAtual(){
+  return {
+    loja:document.getElementById('storeFilter').value,
+    funcionario:document.getElementById('employeeFilter').value
+  };
+}
+
+function matchesAccess(record){
+  const perfil=currentPerfil;
+  const filtro=filtroAtual();
+
+  if(perfil === 'funcionario'){
+    return String(record.cadastrado_por) === String(currentUsuarioId);
+  }
+
+  if(perfil === 'gerente'){
+    if(String(record.loja_id) !== String(currentLojaId)) return false;
+    if(filtro.funcionario && String(record.cadastrado_por) !== String(filtro.funcionario)) return false;
+    return true;
+  }
+
+  if(perfil === 'gerente_geral'){
+    if(filtro.loja && String(record.loja_id) !== String(filtro.loja)) return false;
+    return true;
+  }
+
+  if(perfil === 'admin_global'){
+    if(filtro.loja && String(record.loja_id) !== String(filtro.loja)) return false;
+    if(filtro.funcionario && String(record.cadastrado_por) !== String(filtro.funcionario)) return false;
+    return true;
+  }
+
+  return false;
+}
+
+document.getElementById('storeFilter').addEventListener('change',render);
+document.getElementById('employeeFilter').addEventListener('change',render);
 
 /* =========================================================
    PESQUISA
@@ -1036,6 +1227,7 @@ function render(){
   const term=document.getElementById('searchInput').value.trim().toLowerCase();
 
   const data=records
+    .filter(r=>matchesAccess(r))
     .filter(r=>matches(r,term))
     .slice()
     .sort((a,b)=>{
@@ -1062,7 +1254,7 @@ function render(){
     const days=record._days;
     const st=record._status;
     const img=getPhoto(record);
-    const store=getStore(record);
+    const store=record.loja_nome || getStore(record);
 
     return `<article class="item" role="button" tabindex="0" data-record-id="${escapeHtml(record.id)}">
       <div class="photo">${img
@@ -1075,7 +1267,8 @@ function render(){
         </div>
         <div class="name">${escapeHtml(record.nome)}</div>
         <div class="code">${escapeHtml(record.codigo || '')}</div>
-        ${store ? `<div class="store">Loja: ${escapeHtml(store)}</div>` : ''}
+        ${store && (currentPerfil==='gerente_geral' || currentPerfil==='admin_global') ? `<div class="store">Loja: ${escapeHtml(store)}</div>` : ''}
+        ${(currentPerfil==='gerente' || currentPerfil==='gerente_geral' || currentPerfil==='admin_global') && record.cadastrado_por_nome ? `<div class="store">Cadastrado por: ${escapeHtml(record.cadastrado_por_nome)}</div>` : ''}
         ${days!==null ? `<div class="days ${st.kind}">${daysText(days)}</div>` : ''}
       </div>
     </article>`;
@@ -1112,6 +1305,121 @@ function escapeHtml(value){
 
 }
 
+
+/* =========================================================
+   ACESSO / FILTROS
+========================================================= */
+
+function nomePerfil(perfil){
+  return {
+    funcionario:'Funcionário',
+    gerente:'Gerente',
+    gerente_geral:'Gerente geral',
+    admin_global:'Administrador global'
+  }[perfil] || 'Usuário';
+}
+
+function configurarAcesso(dados){
+  const filtersWrap=document.getElementById('filtersWrap');
+  const storeRow=document.getElementById('storeFilterRow');
+  const employeeRow=document.getElementById('employeeFilterRow');
+  const badge=document.getElementById('accessBadge');
+
+  badge.textContent = `Acesso: ${nomePerfil(dados.usuario.perfil)}`;
+
+  // Funcionário: somente os próprios registros. O RLS já garante isso.
+  if(dados.usuario.perfil === 'funcionario'){
+    filtersWrap.classList.remove('open');
+    storeRow.classList.add('hidden');
+    employeeRow.classList.add('hidden');
+    return;
+  }
+
+  filtersWrap.classList.add('open');
+
+  if(dados.usuario.perfil === 'gerente'){
+    storeRow.classList.add('hidden');
+    employeeRow.classList.remove('hidden');
+  }else if(dados.usuario.perfil === 'gerente_geral'){
+    storeRow.classList.remove('hidden');
+    employeeRow.classList.add('hidden');
+  }else if(dados.usuario.perfil === 'admin_global'){
+    storeRow.classList.remove('hidden');
+    employeeRow.classList.remove('hidden');
+  }else{
+    storeRow.classList.add('hidden');
+    employeeRow.classList.add('hidden');
+  }
+}
+
+function preencherFiltros(){
+  const storeFilter=document.getElementById('storeFilter');
+  const employeeFilter=document.getElementById('employeeFilter');
+
+  const storeValue=storeFilter.value;
+  const employeeValue=employeeFilter.value;
+
+  storeFilter.innerHTML='<option value="">Todas as lojas</option>';
+  employeeFilter.innerHTML='<option value="">Todos os funcionários</option>';
+
+  const lojasAtivas = stores.filter(s => s.ativo !== false);
+  lojasAtivas.forEach(loja=>{
+    const option=document.createElement('option');
+    option.value=String(loja.id);
+    option.textContent=loja.nome || `Loja ${loja.id}`;
+    storeFilter.appendChild(option);
+  });
+
+  employees
+    .filter(u => u.ativo !== false && ['funcionario','gerente'].includes(u.perfil))
+    .forEach(u=>{
+      const option=document.createElement('option');
+      option.value=String(u.id);
+      option.textContent=u.nome || u.email || `Usuário ${u.id}`;
+      employeeFilter.appendChild(option);
+    });
+
+  if([...storeFilter.options].some(o=>o.value===storeValue)) storeFilter.value=storeValue;
+  if([...employeeFilter.options].some(o=>o.value===employeeValue)) employeeFilter.value=employeeValue;
+}
+
+function filtroAtual(){
+  return {
+    loja:document.getElementById('storeFilter').value,
+    funcionario:document.getElementById('employeeFilter').value
+  };
+}
+
+function matchesAccess(record){
+  const perfil=currentPerfil;
+  const filtro=filtroAtual();
+
+  if(perfil === 'funcionario'){
+    return String(record.cadastrado_por) === String(currentUsuarioId);
+  }
+
+  if(perfil === 'gerente'){
+    if(String(record.loja_id) !== String(currentLojaId)) return false;
+    if(filtro.funcionario && String(record.cadastrado_por) !== String(filtro.funcionario)) return false;
+    return true;
+  }
+
+  if(perfil === 'gerente_geral'){
+    if(filtro.loja && String(record.loja_id) !== String(filtro.loja)) return false;
+    return true;
+  }
+
+  if(perfil === 'admin_global'){
+    if(filtro.loja && String(record.loja_id) !== String(filtro.loja)) return false;
+    if(filtro.funcionario && String(record.cadastrado_por) !== String(filtro.funcionario)) return false;
+    return true;
+  }
+
+  return false;
+}
+
+document.getElementById('storeFilter').addEventListener('change',render);
+document.getElementById('employeeFilter').addEventListener('change',render);
 
 /* =========================================================
    PESQUISA
