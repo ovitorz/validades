@@ -1,168 +1,8 @@
-<!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#ffffff"><title>Cadastro de Validade</title><style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f7f7f8;color:#171717}
-.app{max-width:520px;margin:auto;min-height:100vh;padding:14px}
-.top{display:flex;align-items:center;justify-content:space-between;margin:4px 2px 14px}
-.logo{font-size:20px;font-weight:900}
-.counter{font-size:13px;color:#737373}
-.card{background:#fff;border-radius:22px;padding:14px;box-shadow:0 2px 14px rgba(0,0,0,.07);margin-bottom:12px}
-.manual{display:flex;gap:8px;margin-top:10px}
-.manual input{flex:1}
-button,input{font:inherit}
-input{width:100%;padding:15px;border:1px solid #d7d7d7;border-radius:14px;background:#fff;outline:none}
-input:focus{border-color:#171717;box-shadow:0 0 0 3px rgba(0,0,0,.07)}
-.manual button{width:58px;border:0;border-radius:14px;background:#e9e9e9;font-weight:900}
-.hidden{display:none!important}
-.product-photo{width:100%;height:250px;object-fit:contain;background:#f2f2f2;border-radius:18px;margin-bottom:12px}
-.no-photo{height:250px;border-radius:18px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#8a8a8a;margin-bottom:12px;font-size:48px}
-.no-photo span{font-size:14px;font-weight:700;margin-top:7px}
-.product-name{font-size:23px;font-weight:900;line-height:1.15;margin:2px 0 5px}
-.product-code{font-size:13px;color:#777;margin-bottom:16px}
-.date-label{font-size:13px;font-weight:800;color:#555;margin-bottom:7px}
-.date-input{font-size:20px;font-weight:800;height:58px}
-.store-select-wrap{margin-top:14px}
-.store-select-wrap label{display:block;font-size:13px;font-weight:800;color:#555;margin-bottom:7px}
-.store-select-wrap select{width:100%;height:58px;padding:0 14px;border:1px solid #d7d7d7;border-radius:14px;background:#fff;font:inherit;font-size:16px;font-weight:700;outline:none}
-.store-select-wrap select:focus{border-color:#171717;box-shadow:0 0 0 3px rgba(0,0,0,.07)}
-
-.photo-actions{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
-.photo-btn{border:0;background:#eeeeee;border-radius:12px;padding:11px 14px;font-weight:800}
-.save{width:100%;height:60px;border:0;border-radius:16px;background:#171717;color:#fff;font-size:18px;font-weight:900;margin-top:14px}
-.cancel{width:100%;border:0;background:transparent;color:#777;font-weight:800;padding:12px;margin-top:4px}
-.new-label{font-size:13px;font-weight:800;color:#555;margin-bottom:7px}
-.msg{padding:12px 14px;border-radius:14px;font-weight:800;margin-bottom:10px}
-.ok{background:#eaf8ef;color:#126b37}
-.err{background:#fff0f0;color:#a32626}
-.list-title{font-size:17px;font-weight:900;margin:4px 2px 10px}
-.item{display:flex;justify-content:space-between;gap:10px;padding:13px 2px;border-bottom:1px solid #eee}
-.item:last-child{border-bottom:0}
-.item b{display:block}
-.muted{color:#777;font-size:13px}
-
-  .list-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
-  .list-open{border:0;background:#222;color:#fff;border-radius:10px;padding:8px 11px;font-size:11px;font-weight:700;cursor:pointer}
-  .list-open:active{transform:scale(.98)}
-
-  .lista-link-area{
-    width:100%;
-    display:flex;
-    justify-content:center;
-    padding:6px 20px 28px;
-  }
-  .btn-lista{
-    border:0;
-    background:transparent;
-    color:#555;
-    font-size:13px;
-    font-weight:600;
-    padding:10px 16px;
-    cursor:pointer;
-  }
-  .btn-lista:active{opacity:.65}
-
-
-
-  /* BOTÃO FLUTUANTE - LISTA */
-  .fab-lista{
-    position:fixed;
-    right:max(18px, calc((100vw - 520px) / 2 + 18px));
-    bottom:max(18px, env(safe-area-inset-bottom));
-    width:58px;
-    height:58px;
-    border-radius:50%;
-    background:#171717;
-    color:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    text-decoration:none;
-    font-size:24px;
-    box-shadow:0 5px 18px rgba(0,0,0,.20);
-    z-index:1000;
-    -webkit-tap-highlight-color:transparent;
-  }
-  .fab-lista:active{transform:scale(.94)}
-
-
-/* reforço: botão de salvar sempre clicável */
-.save{position:relative;z-index:5;cursor:pointer;pointer-events:auto;-webkit-tap-highlight-color:transparent}
-
-/* ===== Microinterações ===== */
-button, .fab, .item[role="button"] {
-  -webkit-tap-highlight-color: transparent;
-}
-button, .fab {
-  position: relative;
-  overflow: hidden;
-  transition: transform .16s ease, box-shadow .2s ease, filter .2s ease, background-color .2s ease;
-}
-button:hover, .fab:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.03);
-}
-button:active, .fab:active {
-  transform: translateY(1px) scale(.97);
-  filter: brightness(.96);
-}
-button:focus-visible, .fab:focus-visible {
-  outline: 3px solid rgba(0,0,0,.16);
-  outline-offset: 3px;
-}
-input {
-  transition: border-color .2s ease, box-shadow .2s ease, transform .15s ease;
-}
-input:focus {
-  transform: translateY(-1px);
-  box-shadow: 0 0 0 3px rgba(0,0,0,.07);
-}
-.ripple {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255,255,255,.38);
-  transform: scale(0);
-  animation: ripple .48s ease-out;
-  pointer-events: none;
-}
-@keyframes ripple { to { transform: scale(3.2); opacity: 0; } }
-.item[role="button"] {
-  cursor: pointer;
-  transition: transform .16s ease, background-color .2s ease, box-shadow .2s ease;
-}
-.item[role="button"]:hover {
-  transform: translateY(-2px);
-  background: rgba(0,0,0,.018);
-}
-.item[role="button"]:active {
-  transform: scale(.985);
-}
-.pop-in { animation: popIn .28s ease both; }
-@keyframes popIn { from { opacity:0; transform: translateY(7px) scale(.985); } to { opacity:1; transform:none; } }
-.success-pop { animation: successPop .55s ease both; }
-@keyframes successPop { 0%{transform:scale(.98);opacity:.7} 45%{transform:scale(1.015)} 100%{transform:scale(1);opacity:1} }
-
-</style></head><body>
-<div class="app">
-  <div class="top"><div class="logo">Controle de Validade</div></div>
-  <div id="message"></div>
-  <div id="productCard" class="card hidden"></div>
-</div>
-<a class="fab-lista" href="lista_valididades.html" aria-label="Ver lista de validades" title="Ver lista">☷</a>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL = 'https://siuvsahkjfyzdcrskleg.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_At--bKaS3ZiZA0dmyN5FIQ_5WF735Nl';
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
-);
-</script>
-<script>
-const PRODUCTS = [{"codigo": "7892840824754", "nome": "CHEETOS REQUEIJÃO"}, {"codigo": "7892840824990", "nome": "CHEETOS LUA"}, {"codigo": "7891515437411", "nome": "INGREDIENTES P/FEIJOADA  P"}, {"codigo": "7894904272396", "nome": "JERKED SUINO 400G"}, {"codigo": "7891962052571", "nome": "VISCONTI TORRADA  INTEGRAL"}, {"codigo": "7896275960544", "nome": "FRIMESA COPO NATURAL"}, {"codigo": "7894904098293", "nome": "LINGUICA TIPO CUIABANA  SEA"}, {"codigo": "7899934401013", "nome": "AMENDOIM OVINHO DAVILLA 50g"}, {"codigo": "7896064205542", "nome": "BOLINHO ANIMAL  MARSHMALL"}, {"codigo": "7891000476475", "nome": "baton caribe"}, {"codigo": "7891000477274", "nome": "batom triplo chocolate"}, {"codigo": "7891515977528", "nome": "LINGUICA TIPO  PORTUGUESA"}, {"codigo": "7895144208787", "nome": "MENTOS FRUTAS VERMELHAS"}, {"codigo": "7895144208794", "nome": "MENTOS TUTTI FRUTT"}, {"codigo": "7895144297415", "nome": "MENTOS MINT"}, {"codigo": "7896051111856", "nome": "itambe chocolate"}, {"codigo": "7896275980801", "nome": "frimesa leite fermentado"}, {"codigo": "7896004010649", "nome": "zoo cartoon choc"}, {"codigo": "7896004010656", "nome": "zoo cartoon morango"}, {"codigo": "7894904573387", "nome": "PATE DE PRESUNTO SEARA"}, {"codigo": "7898720660115", "nome": "LINGUIÇA CALABRESA  BRASA"}, {"codigo": "7898770420011", "nome": "Monster ultra atrawberry"}, {"codigo": "7896262304306", "nome": "MENTOS M"}, {"codigo": "7896262304351", "nome": "MENTOS FRUIT"}, {"codigo": "7893000052895", "nome": "ESCONDIDINHO DE FRANGO"}, {"codigo": "7893000719279", "nome": "salsicha de frango"}, {"codigo": "7898240320636", "nome": "real cartela morango"}, {"codigo": "7898240320469", "nome": "real mix de frutas"}, {"codigo": "7898240320070", "nome": "real cartela"}, {"codigo": "78938847", "nome": "HALLS MORANGO 28G"}, {"codigo": "7898024395232", "nome": "NUTELLA 140G"}, {"codigo": "7898247260461", "nome": "MARIA MOLE CX"}, {"codigo": "7898247260447", "nome": "CX CANUDO DE LEITE"}, {"codigo": "7896775101317", "nome": "pé de moca guimarães"}, {"codigo": "7896306625022", "nome": "Trento Moussie"}, {"codigo": "7896492201376", "nome": "CHUPÃO DOCE DE LEITE ROS"}, {"codigo": "7896004009988", "nome": "WAFFER CHOCOLATE"}, {"codigo": "7896004009995", "nome": "WAFFER MORANGO"}, {"codigo": "7893000436800", "nome": "SADIA COXAS  1KG"}, {"codigo": "7891515606831", "nome": "LING. FINI. SADIA 215G"}, {"codigo": "7893000135529", "nome": "SALSICHA HOT DOG  SADIA"}, {"codigo": "7894904575824", "nome": "FETTUCINE A BOLONHESA SE"}, {"codigo": "7894904575800", "nome": "Penne a parisiense"}, {"codigo": "7894904296286", "nome": "caldinho verde"}, {"codigo": "7894904245871", "nome": "MAC E CHEESE CHEDDAR"}, {"codigo": "7798040465257", "nome": "PUSH POP TROPICAL MANGA"}, {"codigo": "7896275982331", "nome": "COSTELA DE LOMBO SALGADA"}, {"codigo": "7896003740325", "nome": "Marilan Maizena 140g"}, {"codigo": "7898967207050", "nome": "SABORZITTO 30G"}, {"codigo": "7898967207012", "nome": "Saborzittos Polvilho Salgado"}, {"codigo": "7896051165446", "nome": "QUEIJO MUSSARELA 150G  ITA"}, {"codigo": "7891000442005", "nome": "mucilon"}, {"codigo": "7896275940355", "nome": "MORTADELA SEM  TOUCINHOS"}, {"codigo": "7896275940089", "nome": "BACON  FRIMESA"}, {"codigo": "7896051168331", "nome": "flan itambe frutas vermelhas"}, {"codigo": "7896275986070", "nome": "FRIMESA SALSICHA"}, {"codigo": "7891000393536", "nome": "Nestle zero lasctose"}, {"codigo": "7894904612697", "nome": "MINI HAMBURGUE CHURRASCO"}, {"codigo": "7894904612444", "nome": "linguica com queijo coalho"}, {"codigo": "7891515524630", "nome": "LINGUICA PORTUGUESA  SADIA"}, {"codigo": "7896625211531", "nome": "CREAM CHEESE DANUBIO 400g"}, {"codigo": "7898755200386", "nome": "Molíco Zero 850G"}, {"codigo": "7891000332221", "nome": "Molico Zero Baunilha 850g"}, {"codigo": "7891962008325", "nome": "BISCOITO BAUDUCCO RECHEA"}, {"codigo": "7891962026138", "nome": "bauducco chocolate"}, {"codigo": "1", "nome": "combo lanche da tarde"}, {"codigo": "7896004007618", "nome": "SUCRILHOS ORIGINAL 200G"}, {"codigo": "7898738661128", "nome": "Agua Atlanta 510ml"}, {"codigo": "7898738660169", "nome": "dopamina tangerina 473"}, {"codigo": "7898738660152", "nome": "dopamina tropical 473"}, {"codigo": "7898738660497", "nome": "Dopamina alg. doc. 473ml"}, {"codigo": "7898738660114", "nome": "Dopamina Extr 473ml"}, {"codigo": "7898738660145", "nome": "dopamina maça verde 473ml"}, {"codigo": "7898738660633", "nome": "dopamina"}, {"codigo": "7898738660121", "nome": "dopamina açai/coco 473ml"}, {"codigo": "7898738660138", "nome": "Dopamina tutti frutti 473ml"}, {"codigo": "7898738660176", "nome": "Dopamina mel 473ml"}, {"codigo": "7898915949247", "nome": "DOPAMINA ENERGY 269ml"}, {"codigo": "7898738660039", "nome": "Dopamina Tangerina"}, {"codigo": "7898738660015", "nome": "Dopamina 269ml"}, {"codigo": "7898915949896", "nome": "DOPAMINA COCO E  ACAI"}, {"codigo": "7898915949698", "nome": "ENERGY DRINK 269ML EXTRE"}, {"codigo": "7898738660022", "nome": "Dopamina trop 269ml"}, {"codigo": "7898738660688", "nome": "power melancia"}, {"codigo": "7898738660695", "nome": "Best Power Tropical 2L"}, {"codigo": "7891515521035", "nome": "PANCETA SUINA c/ limão"}, {"codigo": "7898738660701", "nome": "Best Power Tutti Frutti 2L"}, {"codigo": "7898738660671", "nome": "Best Power Maca Verde 2L"}, {"codigo": "7891164004842", "nome": "LINGUICAS TOSCANA AURORA"}, {"codigo": "7891164005412", "nome": "AURORA SALSICHA HOT  DOG"}, {"codigo": "7898600721714", "nome": "HAMBURGUER BRASA"}, {"codigo": "7891515598259", "nome": "MORTADELA  DEFUMADA"}, {"codigo": "7892840822637", "nome": "TORCIDA P.MEXICANA 60G"}, {"codigo": "7891515892401", "nome": "perdigão paio defumada"}, {"codigo": "7896791902547", "nome": "TREVO KIDS"}, {"codigo": "7896791903964", "nome": "TREVO KIDS DENTADURAS"}, {"codigo": "7896691105208", "nome": "CAROLINA PEDAÇOS DE FRUTA"}, {"codigo": "7896691104669", "nome": "CAROLINA PEDAÇOS DE FRUTA açai/m"}, {"codigo": "7896691103860", "nome": "CAROLINA PEDAÇOS DE FRUTAS"}, {"codigo": "7896691104232", "nome": "CAROLINA PEDAÇOS DE FRUTA"}, {"codigo": "7891000261026", "nome": "NESTLE NINHO CARTELA"}, {"codigo": "7896275940218", "nome": "linguica toscana 5KG"}, {"codigo": "7898722510180", "nome": "farofa com chimichurri"}, {"codigo": "7898722512504", "nome": "FAROFA SABOR D'MAMMA TORRESMO 300G"}, {"codigo": "7896004011424", "nome": "pringles"}, {"codigo": "7891515592080", "nome": "QUEIJO PRATO SADIA"}, {"codigo": "7891000096864", "nome": "POLPA NESTLE GREGO  MORG/"}, {"codigo": "7896275970758", "nome": "queijo minas frimesa"}, {"codigo": "7896275980917", "nome": "Doce de Leite Frimesa"}, {"codigo": "7898906409361", "nome": "Pão de Hambúrguer Kero-Kero  c/ Gergelim 250g"}, {"codigo": "7896354100939", "nome": "CHOCOTYNHO MARAJOARA  Caixa"}, {"codigo": "7896045112630", "nome": "frisco sbor caja"}, {"codigo": "7896045112463", "nome": "Frisco caju"}, {"codigo": "7896275982324", "nome": "COSTELINHA SALGADA DE SUÍNO"}, {"codigo": "7894904605057", "nome": "Seara Pizza Bacon e milho Air Fryer"}, {"codigo": "7896326100004", "nome": "guara viton gengibre"}, {"codigo": "7898600721677", "nome": "HAMBÚRGUER BRASA TRADICIONAL"}, {"codigo": "7891515605513", "nome": "MARGARINA BECEL C/SAL 1KG"}, {"codigo": "789100441046", "nome": "choco pretzel 80g"}, {"codigo": "7896523146133", "nome": "FAROFA FA TORRESMO 250G"}, {"codigo": "7896523129754", "nome": "FAROFA FA PICANTE 250G"}, {"codigo": "789652314622", "nome": "farofa sabor carne seca 250g"}, {"codigo": "7896523129761", "nome": "farofa sabor limao 250g"}, {"codigo": "7896275970215", "nome": "QUEIJO PROVOLONE  DEFUMADO"}, {"codigo": "78936478", "nome": "fanta laranja 200ml pet"}, {"codigo": "78937765", "nome": "FANTA GUARANA  200ML"}, {"codigo": "7894900664010", "nome": "Dell valle limonada pink"}, {"codigo": "7894900664003", "nome": "Dell Vale lata limonada classic"}, {"codigo": "7896000597281", "nome": "suco maguary maracuja"}, {"codigo": "7898937630000", "nome": "DOCE DE MOCOTÓ"}, {"codigo": "7896000597250", "nome": "suco maguary uva"}, {"codigo": "7896275920685", "nome": "LINGUIÇA CALABRESA COZIDA E DEFUMADA"}, {"codigo": "7891000394632", "nome": "chambinho morango"}, {"codigo": "7891000378175", "nome": "Iogurte Natural Nestlé"}, {"codigo": "7898755200287", "nome": "CHAMYTO 80G C/6"}, {"codigo": "7896275981150", "nome": "frimesa leite fermentado"}, {"codigo": "7896791905111", "nome": "trevo kids petit"}, {"codigo": "7891000103913", "nome": "Chambinho Maxi Morango 480g"}, {"codigo": "7891000360323", "nome": "NESTON 3 CEREAIS 510g"}, {"codigo": "7898947725505", "nome": "BISNAGA BELÉM UNI"}, {"codigo": "7896275986421", "nome": "Frimesa Camadas"}, {"codigo": "7896000597274", "nome": "suco maguary"}, {"codigo": "7896862001681", "nome": "Frutilac Morango Bicamada 100g"}, {"codigo": "7896791903957", "nome": "trevo kids"}, {"codigo": "7896791903971", "nome": "Trevinho Kids Banana"}, {"codigo": "7891000070444", "nome": "Chamyto Fermentado"}, {"codigo": "7896275984731", "nome": "frimesa iogurte abacaxi 450g"}, {"codigo": "7896791904848", "nome": "trevo kids"}, {"codigo": "7896716310822", "nome": "PAMPLONA LOMBO TIPO CANADENSE 180"}, {"codigo": "7898755200126", "nome": "Chan delle flan"}, {"codigo": "7896791904329", "nome": "FEMENTADO TREVO 450G"}, {"codigo": "7891097105982", "nome": "creme de ricota"}, {"codigo": "7891515574840", "nome": "Claybom c/ creme de leite 1kg"}, {"codigo": "7896691103877", "nome": "CAROLINA IORGUTE PEDAÇOS ameixa"}, {"codigo": "7891000409282", "nome": "grego frutas vermelhas"}, {"codigo": "7897517209643", "nome": "FUGINI DUETO 260G"}, {"codigo": "7897517209650", "nome": "ervilhas"}, {"codigo": "7896079846525", "nome": "TUB-IN CHOCOLATE"}, {"codigo": "7896079846228", "nome": "TUBIN AVELA"}, {"codigo": "7896691105437", "nome": "carol9ina laranja e tangerina"}, {"codigo": "7896691104331", "nome": "carolina garrafao morango"}, {"codigo": "7896862002756", "nome": "frutilac morango"}, {"codigo": "7897026001455", "nome": "SUCO LARANJA 200ML"}, {"codigo": "7897026001233", "nome": "APICE UVA  900ml"}, {"codigo": "7896691104706", "nome": "Carolina açai/morango 1,25g"}, {"codigo": "7896267780198", "nome": "suco only maça"}, {"codigo": "7896691104690", "nome": "carolina acai com banana 1,25kg"}, {"codigo": "7896691105413", "nome": "carolina manga e maracuja"}, {"codigo": "7896267700400", "nome": "suco only maça e pessego"}, {"codigo": "7896267780174", "nome": "SUCO ONLY MAÇA E LARANJA"}, {"codigo": "7898215151814", "nome": "CHOC. PIRACANJUBA PIRA KIDS"}, {"codigo": "7896045112142", "nome": "Frisco Morango"}, {"codigo": "7896045112616", "nome": "FRISCO MORANGO"}, {"codigo": "7898755200331", "nome": "nestle zero morango 1,15kg"}, {"codigo": "7898755200362", "nome": "nestle batido  ZER0 1,15kg"}, {"codigo": "7896791905418", "nome": "hello kitt"}, {"codigo": "7896275984038", "nome": "IORGUTE FRIMESA GRÃOS"}, {"codigo": "7896275920401", "nome": "mortadela frimesa 500g"}, {"codigo": "7898240321473", "nome": "real lacto 800ml salada de frutas"}, {"codigo": "7898240321381", "nome": "real garrafao"}, {"codigo": "7891025116592", "nome": "ACTIVIA MORANGO  ZERO  1KL"}, {"codigo": "7898600721929", "nome": "ALMONDEGA BRASA 500g"}, {"codigo": "7898600721943", "nome": "CARNE MOIDA 500g Brasa"}, {"codigo": "7898600721608", "nome": "KIBE BV IQF BRASA 1KG"}, {"codigo": "7896275900939", "nome": "LOMBO DEFUMADO DE  SUINO"}, {"codigo": "7898723470407", "nome": "Geleia D Agua"}, {"codigo": "7898279799823", "nome": "FINIS TUBES  MORANGO"}, {"codigo": "7891000460245", "nome": "GAROTO CHOCTRIO"}, {"codigo": "7898755181180", "nome": "bold DOCE DE LEITE"}, {"codigo": "7896716311133", "nome": "APRESUNTADO PAMPLONA  180g"}, {"codigo": "7898014855074", "nome": "sferrie agua mineral"}, {"codigo": "7898638068652", "nome": "Serra gaúcha UVA 1,2L"}, {"codigo": "7896000597267", "nome": "CX COM 27 SUCO MAGUARY LARANJA"}, {"codigo": "7894904279203", "nome": "BISTECA SUINA"}, {"codigo": "7896031223845", "nome": "LINGUIÇA DE COSTELA"}, {"codigo": "7896581338914", "nome": "FLIP LASANHA  BOLONHESA"}, {"codigo": "7894904294626", "nome": "frango de padaria"}, {"codigo": "7893000488878", "nome": "cox. asa drumette 1kg"}, {"codigo": "7896581355294", "nome": "aneis de cebola"}, {"codigo": "618341598355", "nome": "CARNE MOIDA REI 500GR"}, {"codigo": "7891515194864", "nome": "MOELA PERDIGAO 1KG"}, {"codigo": "7898373971712", "nome": "BAITA FILEZINHO APIMENTADO"}, {"codigo": "7896275982041", "nome": "LINGUIÇA TOSCANA 600G  FRIMESA"}, {"codigo": "7898963763260", "nome": "PAO DE QUEIIJO EMPANADO"}, {"codigo": "7891515969509", "nome": "COXINHA DA ASA PERDIGAO pct 1kg"}, {"codigo": "7894904500253", "nome": "HAMBURGUER REZENDE C/12"}, {"codigo": "7898963763512", "nome": "BATATA PREMIUM 1,5KG"}, {"codigo": "7896625210756", "nome": "vigor ameixa"}, {"codigo": "7896625210763", "nome": "Iogurte Natural Vigor 150g"}, {"codigo": "7896625210749", "nome": "vigor desnatado"}, {"codigo": "7896625210732", "nome": "Iogurte Vigor Mel 150g"}, {"codigo": "7899934401501", "nome": "COOKIES LEITE CONDENSADO"}, {"codigo": "7891097104770", "nome": "GREGO FLOCOS 500G"}, {"codigo": "7891000332269", "nome": "MOLICO IOGURTE ZERO"}, {"codigo": "7898240320001", "nome": "realzinho 130g"}, {"codigo": "7896862003128", "nome": "Iogurte Frutas Vermelhas Frutilac 130g"}, {"codigo": "7896862001780", "nome": "Iogurte Morango Frutilac 130g"}, {"codigo": "7896862001797", "nome": "GARRAFINHA FRUTILAC  FRUT"}, {"codigo": "7893000084360", "nome": "MARGARINA  AERADA  QUALY"}, {"codigo": "7891515531331", "nome": "FIGADO Perdigão 1KG"}, {"codigo": "7894904603602", "nome": "hot dog coreano"}, {"codigo": "630941900956", "nome": "Hamb. Rei da Almondega 36und"}, {"codigo": "7898373971682", "nome": "CHICKEN FRANGO 700G"}, {"codigo": "7891515485139", "nome": "LINGUIÇA PERDIGAO COM QUEIJO"}, {"codigo": "7894904003495", "nome": "seara steak UNI"}, {"codigo": "7896716320029", "nome": "LINGUIÇA TOSCANA MINI 400g"}, {"codigo": "7894904769827", "nome": "FILEZINHO DE PEITO TEMPERADO"}, {"codigo": "7891515650018", "nome": "linguiça fininha toscana"}, {"codigo": "7896716312512", "nome": "QUEIJO MUSSARELA FATIADO 150G"}, {"codigo": "7896716311447", "nome": "PAIO  PAMPLONA"}, {"codigo": "7898240321152", "nome": "realzinho capacete 130g"}, {"codigo": "7891000247648", "nome": "NESTLE COOKIE"}, {"codigo": "7897177453035", "nome": "CALABRESA FRICASA"}, {"codigo": "7896581338945", "nome": "FLIP LASANHA CALABRESA"}, {"codigo": "7896581338969", "nome": "FLIP LASANHA PRESUNTO"}, {"codigo": "7898240320360", "nome": "real frutas vermelhas 150g"}, {"codigo": "7891000363256", "nome": "Nestle morango"}, {"codigo": "7896702902093", "nome": "pipoca de chocolate"}, {"codigo": "7894904205158", "nome": "BACON SEARA"}, {"codigo": "7896716313144", "nome": "Bacon pamplona"}, {"codigo": "7896716310983", "nome": "SALAMINHO  PAMPLONA"}, {"codigo": "7896716311195", "nome": "SALAME ITALIANO PAMPLONA"}, {"codigo": "7896275920838", "nome": "Frimesa mprtadela tipo bologna"}, {"codigo": "7891962064048", "nome": "Bauducco Pão tradiconal"}, {"codigo": "78929340", "nome": "STIKADINHO  MORANGO"}, {"codigo": "7896058506105", "nome": "bala de goma"}, {"codigo": "7896775101881", "nome": "PASTA DE AMENDOIM GUIMARÃES"}, {"codigo": "7896625213467", "nome": "VIGOR ZER0 150G"}, {"codigo": "7896833800411", "nome": "flor do vale"}, {"codigo": "7896625213498", "nome": "VIGOR ZERO BATIDO 1,100KG"}, {"codigo": "7896625214341", "nome": "VIGOR 1,110kg ZER0 jabuticaba"}, {"codigo": "7896625213481", "nome": "VIGOR ZERO  1,100KG"}, {"codigo": "7894904555659", "nome": "SALAME ITAL. SEARA 100G"}, {"codigo": "7896716312536", "nome": "QUEIJO PRATO FATIADO PAMPLONA 150G"}, {"codigo": "7896625213542", "nome": "Vigor Batido zero 800g"}, {"codigo": "7891008125719", "nome": "garoto ao leite amendoim"}, {"codigo": "7896625214136", "nome": "VIGOR ZERO JABUTICABA"}, {"codigo": "7896045112111", "nome": "SUCO MANGA FRISCO"}, {"codigo": "7896045112623", "nome": "SUCO MARACUJÁ COM IORGUTE"}, {"codigo": "7896045112715", "nome": "FRISCO BAUNILHA E LIMAO"}, {"codigo": "7898331014413", "nome": "OVOMALTINE GR 530G"}, {"codigo": "7897177452212", "nome": "BACON EM CUBOS 200G FRICA"}, {"codigo": "7896058506099", "nome": "GOMRTS IOGURTE"}, {"codigo": "7896202891415", "nome": "BANANINHA  OLIVEIRA"}, {"codigo": "7896336005917", "nome": "paçoca"}, {"codigo": "7896079816115", "nome": "TORRONE COM AMENDOIM 70G"}, {"codigo": "7898274991574", "nome": "XTAPA UVA 450ML"}, {"codigo": "7898274991253", "nome": "Suco X-Tapa FRUTAS CITRICAS"}, {"codigo": "7898274991284", "nome": "X TAPA MORANGO E  MARAC  4"}, {"codigo": "7896275920890", "nome": "PAPADA DEFUMADA FRIMESA"}, {"codigo": "7896275984670", "nome": "moldado de carne"}, {"codigo": "7896275980078", "nome": "frimesa zero"}, {"codigo": "7896275901165", "nome": "Bacon em cubos frimesa 400g"}, {"codigo": "7891000382349", "nome": "NESTLE GREGO MORANGO"}, {"codigo": "7891515476229", "nome": "LASANHA  CALABRESA  SADIA"}, {"codigo": "7898755200225", "nome": "MOLICO AMEIXA ZERO"}, {"codigo": "7891515475680", "nome": "Lasanha SD 4 queijos 600g"}, {"codigo": "7891515475703", "nome": "LASANHA BOLONHESA SADIA 600G"}, {"codigo": "7891515475642", "nome": "LASANHA DE FRANGO  SADIA  6"}, {"codigo": "7891515475697", "nome": "LASANHA DE PRESUNTO E QU"}, {"codigo": "7891515476212", "nome": "LASANHA PEITO DE PERU"}, {"codigo": "78936195", "nome": "CHANDELLE CHOCOLATE"}, {"codigo": "7893000289758", "nome": "SALAME SADIA TIPO HAMBURGUÊS"}, {"codigo": "7622210592750", "nome": "Biscoito Trakinas Chocolate 126g"}, {"codigo": "7891962080093", "nome": "viscont chocolate"}, {"codigo": "7898331012570", "nome": "MISTURA BOLO CHOC EXTRA  3"}, {"codigo": "7891000350119", "nome": "COOKIES ALPINO 60G"}, {"codigo": "78949416", "nome": "halls brueberry"}, {"codigo": "7898024394181", "nome": "NUTELLA 350g"}, {"codigo": "7891515490430", "nome": "LASANHA CALABRESA  PERDIGAÕ"}, {"codigo": "7891515496357", "nome": "LASANHA BOLONHESA 600g"}, {"codigo": "7891515496234", "nome": "LASANHA DE FRANGO PERDIGÃO 600g"}, {"codigo": "7891515430153", "nome": "MORTADELA  PERDIGAO"}, {"codigo": "7891962077697", "nome": "BAUDUCO COLOMBA NAT 600g"}, {"codigo": "7891515410315", "nome": "claybom 1kg"}, {"codigo": "7896412852169", "nome": "Biscoito Orquídea Maizena 320g"}, {"codigo": "7896412852244", "nome": "Orquidea Leite 320g"}, {"codigo": "7896412852121", "nome": "Cracker Orquidea"}, {"codigo": "7896412852107", "nome": "Biscoito Orquídea Água e Sal 320g"}, {"codigo": "7891000441312", "nome": "nescau protein 15g"}, {"codigo": "7898591450723", "nome": "FINI MINHOCA"}, {"codigo": "7898331014406", "nome": "OVOVALTINE PEQ 100GR"}, {"codigo": "1220000250222", "nome": "MONSTER WATERMELON 473G"}, {"codigo": "070847022015", "nome": "MONSTER GUARANA 473ML"}, {"codigo": "070847022206", "nome": "MONSTER ULTRA WHITE 473ML"}, {"codigo": "070847033301", "nome": "MONSTER MANGO LOCO 473ML"}, {"codigo": "7896275920845", "nome": "Kit Salgados Frimesa"}, {"codigo": "7894900660401", "nome": "Del Valle Sabor Manga 290 ml"}, {"codigo": "7891962077703", "nome": "CHOCOLOMBA CHOCOLATE 600GR"}, {"codigo": "7896275910280", "nome": "Calabresa Frimesa"}, {"codigo": "7896625210831", "nome": "vigor mix granola"}, {"codigo": "7896625210848", "nome": "vigor mix granola"}, {"codigo": "7896625210817", "nome": "vigor viv mix granola"}, {"codigo": "7896625210886", "nome": "vigor morango"}, {"codigo": "7891962051338", "nome": "Pão Visconti Tradicional 400g"}, {"codigo": "78908901", "nome": "COCA PET 200ML"}, {"codigo": "78936171", "nome": "NESTLE GREGO TRAD"}, {"codigo": "7891000409305", "nome": "Nestle Grego Raspa de Limão"}, {"codigo": "5", "nome": "TRUFA RECHEADA"}, {"codigo": "7891962070124", "nome": "COLOMBA FRUTAS"}, {"codigo": "7891962074351", "nome": "Colomba feliz pascoa"}, {"codigo": "7891962074382", "nome": "BAUDUCCO CHOCOLOMBA mousse"}, {"codigo": "7891962074368", "nome": "CHOCOLOMBA"}, {"codigo": "7891000396452", "nome": "chandelle duo"}, {"codigo": "7896275970185", "nome": "Nata Frimesa"}, {"codigo": "7894900060010", "nome": "Sprite zero 350ml"}, {"codigo": "7896350851088", "nome": "CHICLE DANNY CEREJA"}, {"codigo": "7896350851170", "nome": "CHICLE DANNY MORANGO"}, {"codigo": "7896350850968", "nome": "CHICLE DANNY TUTI-FRUTTI"}, {"codigo": "7896275960070", "nome": "frimesa queijo prato 3g"}, {"codigo": "7891515608569", "nome": "HAMBURGUER DE ABOBORA CONG PT 113G"}, {"codigo": "7892840824761", "nome": "cheetos 21g"}, {"codigo": "7894904575374", "nome": "KIBE CONGELADO  SEARA"}, {"codigo": "7898755200232", "nome": "chambinho banana e maça"}, {"codigo": "7896423439038", "nome": "snikers"}, {"codigo": "7896423438994", "nome": "snickers"}, {"codigo": "7895144892832", "nome": "MENTOS COOL WHITE"}, {"codigo": "7891515622633", "nome": "File Mignon suino 180g"}, {"codigo": "7891515598266", "nome": "PRESUNTO FATIADO RESFRIADO 180G SADIA"}, {"codigo": "7894904271368", "nome": "MAIONESE SOYA"}, {"codigo": "7898933740734", "nome": "MOSTARDA SABOR D'MAMA 389G"}, {"codigo": "7898933740727", "nome": "BARBUCUE SABOR D'MAMA 389G"}, {"codigo": "7891962080581", "nome": "kit pascoa"}, {"codigo": "7891515608552", "nome": "HAMBURGUER DE BROCOLIS CONG PT 113G"}, {"codigo": "7891515650025", "nome": "linguiça com chimichurri"}, {"codigo": "7898738661142", "nome": "agua atlanta"}, {"codigo": "7898184681572", "nome": "batata palha mineiro"}, {"codigo": "7894904609482", "nome": "Máscara e orelha salgadas"}, {"codigo": "7893000027701", "nome": "X-BURGUER HOT POCKET"}, {"codigo": "7891000096468", "nome": "chandelle choc. 360g"}];
 const byCode = new Map(PRODUCTS.map(p => [String(p.codigo), p]));
 const productCache = new Map();
+
 const KEY = 'validades_v2';
-const PHOTOS = 'fotos_produtos_v2';
 const PRODUTOS_KEY = 'produtos_cadastrados_v1';
 
 function readProductCatalog(){
@@ -183,370 +23,1552 @@ function saveProductToCatalog(codigo,nome){
 
   try{
     const catalog=readProductCatalog();
-    const index=catalog.findIndex(p=>normalize(p.codigo)===code);
+    const index=catalog.findIndex(
+      p=>normalize(p.codigo)===code
+    );
 
     if(index>=0){
-      catalog[index]={...catalog[index],codigo:code,nome:name};
+      catalog[index]={
+        ...catalog[index],
+        codigo:code,
+        nome:name
+      };
     }else{
-      catalog.push({codigo:code,nome:name});
+      catalog.push({
+        codigo:code,
+        nome:name
+      });
     }
 
-    localStorage.setItem(PRODUTOS_KEY,JSON.stringify(catalog));
+    localStorage.setItem(
+      PRODUTOS_KEY,
+      JSON.stringify(catalog)
+    );
   }catch(e){
-    console.warn('Produto não pôde ser salvo no catálogo:', e);
+    console.warn(
+      'Produto não pôde ser salvo no catálogo:',
+      e
+    );
   }
 }
+
+
+/* =========================================================
+   BUSCA PRODUTO
+   ========================================================= */
 
 async function getProductByCode(codigo){
   const code=normalize(codigo);
   if(!code) return null;
 
-  // 1) Cache da sessão: elimina consultas repetidas durante o uso.
+  // 1) Cache da sessão
   const cached=productCache.get(code);
-  if(cached) return cached;
 
-  // 2) Catálogo fixo: mostra o produto imediatamente, sem esperar a rede.
+  if(cached){
+    return cached;
+  }
+
+  // 2) Catálogo fixo
   const fixedProduct=byCode.get(code);
-  if(fixedProduct){
-    const localProduct={codigo:code,nome:fixedProduct.nome,foto_url:''};
-    productCache.set(code,localProduct);
 
-    // Busca os dados completos em segundo plano (foto/nome atualizados).
+  if(fixedProduct){
+
+    const localProduct={
+      codigo:code,
+      nome:fixedProduct.nome,
+      foto_url:''
+    };
+
+    productCache.set(
+      code,
+      localProduct
+    );
+
+    // Busca dados atualizados em segundo plano
     supabaseClient
       .from('produtos')
-      .select('id,codigo_barras,nome,foto_url,ativo')
+      .select(
+        'id,codigo_barras,nome,foto_url,ativo'
+      )
       .eq('codigo_barras',code)
       .eq('ativo',true)
       .limit(1)
       .maybeSingle()
       .then(({data,error})=>{
+
         if(!error && data){
-          productCache.set(code,{
-            id:data.id,
-            codigo:normalize(data.codigo_barras),
-            nome:data.nome || localProduct.nome,
-            foto_url:data.foto_url || ''
-          });
+
+          productCache.set(
+            code,
+            {
+              id:data.id,
+              codigo:normalize(data.codigo_barras),
+              nome:data.nome || localProduct.nome,
+              foto_url:data.foto_url || ''
+            }
+          );
+
+          // Se a tela ainda estiver mostrando este produto,
+          // atualiza a foto automaticamente.
+          if(
+            selected &&
+            normalize(selected.codigo)===code
+          ){
+            selected={
+              id:data.id,
+              codigo:normalize(data.codigo_barras),
+              nome:data.nome || localProduct.nome,
+              foto_url:data.foto_url || ''
+            };
+
+            renderProduct();
+          }
         }
+
       })
       .catch(()=>{});
+
     return localProduct;
   }
 
-  // 3) Catálogo local antigo.
+
+  // 3) Catálogo local antigo
   const catalogProduct=readProductCatalog().find(
     p=>normalize(p.codigo)===code
   );
-  if(catalogProduct && catalogProduct.nome){
-    const localProduct={codigo:code,nome:catalogProduct.nome,foto_url:''};
-    productCache.set(code,localProduct);
+
+  if(
+    catalogProduct &&
+    catalogProduct.nome
+  ){
+
+    const localProduct={
+      codigo:code,
+      nome:catalogProduct.nome,
+      foto_url:''
+    };
+
+    productCache.set(
+      code,
+      localProduct
+    );
+
     return localProduct;
   }
 
-  // 4) Supabase para produtos que não estão nos catálogos locais.
+
+  // 4) Supabase
   const {data,error}=await supabaseClient
     .from('produtos')
-    .select('id,codigo_barras,nome,foto_url,ativo')
+    .select(
+      'id,codigo_barras,nome,foto_url,ativo'
+    )
     .eq('codigo_barras',code)
     .eq('ativo',true)
     .limit(1)
     .maybeSingle();
 
   if(error){
-    console.error('Erro consultando o Supabase:',error);
-    throw new Error('Não foi possível consultar o cadastro de produtos.');
+    console.error(
+      'Erro consultando o Supabase:',
+      error
+    );
+
+    throw new Error(
+      'Não foi possível consultar o cadastro de produtos.'
+    );
   }
 
   if(data){
+
     const product={
       id:data.id,
       codigo:normalize(data.codigo_barras),
       nome:data.nome || '',
       foto_url:data.foto_url || ''
     };
-    productCache.set(code,product);
+
+    productCache.set(
+      code,
+      product
+    );
+
     return product;
   }
 
   return null;
 }
 
-let selected = null;
-const $ = id => document.getElementById(id);
-function msg(text,type='ok'){
-  $('message').innerHTML = text ? `<div class="msg ${type}">${text}</div>` : '';
-}
-function readRecords(){
-  try {
-    const raw = localStorage.getItem(KEY);
-    if(!raw) return [];
-    const value = JSON.parse(raw);
-    return Array.isArray(value) ? value : [];
-  } catch(e) {
-    console.error('Erro lendo registros:',e);
-    return [];
+
+/* =========================================================
+   UPLOAD DA FOTO
+   ========================================================= */
+
+async function uploadProductPhoto(file,produtoId){
+
+  if(!file || !produtoId){
+    return '';
   }
-}
-function normalize(code){ return String(code ?? '').replace(/\D/g,''); }
-function esc(s){ return String(s ?? '').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-async function find(code){
-  const c=normalize(code);
-  if(!c){ msg('Código de barras inválido.','err'); return; }
+
+  // Verifica tamanho
+  if(file.size > 10 * 1024 * 1024){
+    throw new Error(
+      'A foto é muito grande. Escolha uma imagem de até 10 MB.'
+    );
+  }
+
+  // Descobre extensão
+  let extension=
+    (file.name.split('.').pop() || 'jpg')
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g,'');
+
+  const allowedExtensions=[
+    'jpg',
+    'jpeg',
+    'png',
+    'webp',
+    'gif'
+  ];
+
+  if(
+    !allowedExtensions.includes(extension)
+  ){
+    extension='jpg';
+  }
+
+  /*
+    Cada produto terá seu próprio arquivo.
+
+    Exemplo:
+
+    fotos_produtos/
+      produtos/
+        157.jpg
+  */
+
+  const filePath=
+    `produtos/${produtoId}.${extension}`;
+
+
+  /* -------------------------------------------------------
+     Se já existe uma foto com outra extensão,
+     tentamos remover versões antigas.
+     ------------------------------------------------------- */
+
+  const possibleFiles=[
+    'jpg',
+    'jpeg',
+    'png',
+    'webp',
+    'gif'
+  ].map(
+    ext=>`produtos/${produtoId}.${ext}`
+  );
 
   try{
-    msg('Consultando produto...','');
-    const product=await getProductByCode(c);
-    selected=product || {codigo:c,nome:''};
-    renderProduct();
+
+    await supabaseClient
+      .storage
+      .from('fotos_produtos')
+      .remove(possibleFiles);
+
   }catch(e){
-    console.error('Erro ao buscar produto:',e);
-    msg(e.message || 'Erro ao consultar o produto.','err');
+
+    // Não impede o novo upload
+    console.warn(
+      'Não foi possível remover fotos antigas:',
+      e
+    );
+  }
+
+
+  /* -------------------------------------------------------
+     Upload
+     ------------------------------------------------------- */
+
+  const {
+    error:uploadError
+  } = await supabaseClient
+    .storage
+    .from('fotos_produtos')
+    .upload(
+      filePath,
+      file,
+      {
+        upsert:true,
+        cacheControl:'31536000',
+        contentType:
+          file.type ||
+          (
+            extension==='jpg'
+              ? 'image/jpeg'
+              : `image/${extension}`
+          )
+      }
+    );
+
+
+  if(uploadError){
+
+    console.error(
+      'Erro ao enviar foto:',
+      uploadError
+    );
+
+    throw new Error(
+      'Não foi possível enviar a foto: '+
+      uploadError.message
+    );
+  }
+
+
+  /* -------------------------------------------------------
+     URL pública
+     ------------------------------------------------------- */
+
+  const {
+    data:publicData
+  } = supabaseClient
+    .storage
+    .from('fotos_produtos')
+    .getPublicUrl(filePath);
+
+
+  if(
+    !publicData ||
+    !publicData.publicUrl
+  ){
+    throw new Error(
+      'Não foi possível obter o endereço da foto.'
+    );
+  }
+
+
+  /*
+    Adicionamos uma versão para evitar
+    que o navegador mostre a foto antiga
+    em cache.
+  */
+
+  return (
+    publicData.publicUrl+
+    '?v='+Date.now()
+  );
+}
+
+
+/* =========================================================
+   VARIÁVEIS
+   ========================================================= */
+
+let selected=null;
+
+const $=id=>
+  document.getElementById(id);
+
+
+function msg(
+  text,
+  type='ok'
+){
+
+  $('message').innerHTML=
+    text
+      ? `<div class="msg ${type}">${text}</div>`
+      : '';
+}
+
+
+function normalize(code){
+
+  return String(
+    code ?? ''
+  ).replace(/\D/g,'');
+}
+
+
+function esc(s){
+
+  return String(
+    s ?? ''
+  ).replace(
+    /[&<>"']/g,
+    m=>({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#39;'
+    }[m])
+  );
+}
+
+
+/* =========================================================
+   BUSCAR
+   ========================================================= */
+
+async function find(code){
+
+  const c=normalize(code);
+
+  if(!c){
+
+    msg(
+      'Código de barras inválido.',
+      'err'
+    );
+
+    return;
+  }
+
+  try{
+
+    msg(
+      'Consultando produto...',
+      ''
+    );
+
+    const product=
+      await getProductByCode(c);
+
+    selected=
+      product ||
+      {
+        codigo:c,
+        nome:'',
+        foto_url:''
+      };
+
+    renderProduct();
+
+  }catch(e){
+
+    console.error(
+      'Erro ao buscar produto:',
+      e
+    );
+
+    msg(
+      e.message ||
+      'Erro ao consultar o produto.',
+      'err'
+    );
   }
 }
 
-let currentUsuario = null;
-let lojasDisponiveis = [];
+
+/* =========================================================
+   USUÁRIO / LOJAS
+   ========================================================= */
+
+let currentUsuario=null;
+let lojasDisponiveis=[];
+
 
 async function carregarContextoUsuario(){
-  const {data:{session},error:sessionError}=await supabaseClient.auth.getSession();
-  if(sessionError || !session){
-    window.location.replace('login.html');
-    throw new Error('Sessão não encontrada.');
+
+  const {
+    data:{session},
+    error:sessionError
+  } =
+    await supabaseClient
+      .auth
+      .getSession();
+
+
+  if(
+    sessionError ||
+    !session
+  ){
+
+    window.location.replace(
+      'login.html'
+    );
+
+    throw new Error(
+      'Sessão não encontrada.'
+    );
   }
 
-  const {data:usuario,error:usuarioError}=await supabaseClient
-    .from('usuarios')
-    .select('id,loja_id,perfil,nome,ativo')
-    .eq('auth_user_id',session.user.id)
-    .maybeSingle();
 
-  if(usuarioError) throw new Error('Não foi possível identificar o usuário: '+usuarioError.message);
-  if(!usuario || usuario.ativo === false) throw new Error('Usuário não encontrado ou inativo.');
+  const {
+    data:usuario,
+    error:usuarioError
+  } =
+    await supabaseClient
+      .from('usuarios')
+      .select(
+        'id,loja_id,perfil,nome,ativo'
+      )
+      .eq(
+        'auth_user_id',
+        session.user.id
+      )
+      .maybeSingle();
+
+
+  if(usuarioError){
+
+    throw new Error(
+      'Não foi possível identificar o usuário: '+
+      usuarioError.message
+    );
+  }
+
+
+  if(
+    !usuario ||
+    usuario.ativo===false
+  ){
+
+    throw new Error(
+      'Usuário não encontrado ou inativo.'
+    );
+  }
+
 
   currentUsuario=usuario;
 
-  if(usuario.perfil === 'gerente_geral' || usuario.perfil === 'admin_global'){
-    const {data:lojas,error:lojasError}=await supabaseClient
-      .from('lojas')
-      .select('id,nome,ativo')
-      .eq('ativo',true)
-      .order('nome');
 
-    if(lojasError) throw new Error('Não foi possível carregar as lojas: '+lojasError.message);
-    lojasDisponiveis=lojas || [];
+  if(
+    usuario.perfil==='gerente_geral' ||
+    usuario.perfil==='admin_global'
+  ){
+
+    const {
+      data:lojas,
+      error:lojasError
+    } =
+      await supabaseClient
+        .from('lojas')
+        .select(
+          'id,nome,ativo'
+        )
+        .eq(
+          'ativo',
+          true
+        )
+        .order('nome');
+
+
+    if(lojasError){
+
+      throw new Error(
+        'Não foi possível carregar as lojas: '+
+        lojasError.message
+      );
+    }
+
+
+    lojasDisponiveis=
+      lojas || [];
+
   }else{
+
     lojasDisponiveis=[];
   }
 }
 
-function renderProduct(){
-  const p=selected;
-  const isNew=!p.nome;
-  let photos={};
-  try{ photos=JSON.parse(localStorage.getItem(PHOTOS)||'{}'); }catch(e){}
-  const savedPhoto=photos[p.codigo] || p.foto_url || '';
-  $('productCard').classList.remove('hidden');
-  $('productCard').innerHTML=`
-    ${savedPhoto ? `<img class="product-photo" src="${esc(savedPhoto)}" alt="Foto do produto" loading="eager" decoding="async">` : `<div class="no-photo">📦<span>${isNew?'Adicionar foto do produto':'Foto ainda não cadastrada'}</span></div>`}
-    <div class="product-name">${isNew?'Produto novo':esc(p.nome)}</div>
-    <div class="product-code">${esc(p.codigo)}</div>
-    ${isNew ? `<div class="new-label">Nome do produto</div><input id="newName" autocomplete="off" placeholder="Digite o nome do produto">` : ''}
-    <div style="margin-top:${isNew?'14px':'0'}"><div class="date-label">VALIDADE</div><input id="date" class="date-input" type="date"></div>
-    ${(currentUsuario && ['gerente_geral','admin_global'].includes(currentUsuario.perfil)) ? `
-      <div class="store-select-wrap">
-        <label for="storeSelect">Loja onde esta validade será cadastrada</label>
-        <select id="storeSelect">
-          <option value="">Selecione a loja</option>
-          ${lojasDisponiveis.map(l => `<option value="${l.id}">${esc(l.nome)}</option>`).join('')}
-        </select>
-      </div>` : ''}
-    <div class="photo-actions"><span class="muted">${savedPhoto?'Foto cadastrada':'Sem foto'}</span><label class="photo-btn" for="photo">📷 ${savedPhoto?'Trocar foto':'Adicionar foto'}</label><input id="photo" class="hidden" type="file" accept="image/*" capture="environment"></div>
-    <button id="saveBtn" class="save" type="button" onclick="registerProduct()">${isNew ? "SALVAR PRODUTO" : "SALVAR VALIDADE"}</button>
-    <button class="cancel" type="button" onclick="cancelProduct()">Cancelar</button>`;
-  const date=$('date');
-  if(isNew) $('newName').focus(); else date.focus();
-  date.addEventListener('keydown',e=>{if(e.key==='Enter') registerProduct();});
-}
-function cancelProduct(){ window.location.href='leitor.html'; }
-async function registerProduct(){
-  try {
-    if(!selected) { msg('Nenhum produto selecionado.','err'); return; }
-    const dateEl=$('date');
-    const date=dateEl ? dateEl.value : '';
-    const isNew=!selected.nome;
-    const name=selected.nome || (($('newName') && $('newName').value) || '').trim();
-    if(isNew && !name){ msg('Digite o nome do produto.','err'); if($('newName')) $('newName').focus(); return; }
-    if(!date){ msg('Informe a validade.','err'); if(dateEl) dateEl.focus(); return; }
 
-    let lojaId = currentUsuario ? currentUsuario.loja_id : null;
-    if(currentUsuario && ['gerente_geral','admin_global'].includes(currentUsuario.perfil)){
-      const storeEl=$('storeSelect');
-      lojaId=storeEl ? storeEl.value : '';
+/* =========================================================
+   RENDERIZA PRODUTO
+   ========================================================= */
+
+function renderProduct(){
+
+  const p=selected;
+
+  const isNew=!p.nome;
+
+  const savedPhoto=
+    p.foto_url || '';
+
+
+  $('productCard')
+    .classList
+    .remove('hidden');
+
+
+  $('productCard').innerHTML=`
+
+    ${
+      savedPhoto
+
+      ?
+
+      `<img
+        class="product-photo"
+        src="${esc(savedPhoto)}"
+        alt="Foto do produto"
+        loading="eager"
+        decoding="async"
+      >`
+
+      :
+
+      `<div class="no-photo">
+        📦
+        <span>
+          ${
+            isNew
+              ? 'Adicionar foto do produto'
+              : 'Foto ainda não cadastrada'
+          }
+        </span>
+      </div>`
+    }
+
+
+    <div class="product-name">
+      ${
+        isNew
+          ? 'Produto novo'
+          : esc(p.nome)
+      }
+    </div>
+
+
+    <div class="product-code">
+      ${esc(p.codigo)}
+    </div>
+
+
+    ${
+      isNew
+
+      ?
+
+      `
+      <div class="new-label">
+        Nome do produto
+      </div>
+
+      <input
+        id="newName"
+        autocomplete="off"
+        placeholder="Digite o nome do produto"
+      >
+      `
+
+      :
+
+      ''
+    }
+
+
+    <div
+      style="margin-top:${isNew?'14px':'0'}"
+    >
+
+      <div class="date-label">
+        VALIDADE
+      </div>
+
+      <input
+        id="date"
+        class="date-input"
+        type="date"
+      >
+
+    </div>
+
+
+    ${
+      (
+        currentUsuario &&
+        [
+          'gerente_geral',
+          'admin_global'
+        ].includes(
+          currentUsuario.perfil
+        )
+      )
+
+      ?
+
+      `
+      <div class="store-select-wrap">
+
+        <label
+          for="storeSelect"
+        >
+          Loja onde esta validade será cadastrada
+        </label>
+
+        <select id="storeSelect">
+
+          <option value="">
+            Selecione a loja
+          </option>
+
+          ${
+            lojasDisponiveis
+              .map(
+                l=>
+                  `<option value="${l.id}">
+                    ${esc(l.nome)}
+                  </option>`
+              )
+              .join('')
+          }
+
+        </select>
+
+      </div>
+      `
+
+      :
+
+      ''
+    }
+
+
+    <div class="photo-actions">
+
+      <span class="muted">
+        ${
+          savedPhoto
+            ? 'Foto cadastrada'
+            : 'Sem foto'
+        }
+      </span>
+
+
+      <label
+        class="photo-btn"
+        for="photo"
+      >
+        📷 ${
+          savedPhoto
+            ? 'Trocar foto'
+            : 'Adicionar foto'
+        }
+      </label>
+
+
+      <input
+        id="photo"
+        class="hidden"
+        type="file"
+        accept="image/*"
+        capture="environment"
+      >
+
+    </div>
+
+
+    <button
+      id="saveBtn"
+      class="save"
+      type="button"
+      onclick="registerProduct()"
+    >
+      ${
+        isNew
+          ? 'SALVAR PRODUTO'
+          : 'SALVAR VALIDADE'
+      }
+    </button>
+
+
+    <button
+      class="cancel"
+      type="button"
+      onclick="cancelProduct()"
+    >
+      Cancelar
+    </button>
+  `;
+
+
+  const date=$('date');
+
+
+  if(isNew){
+
+    $('newName').focus();
+
+  }else{
+
+    date.focus();
+
+  }
+
+
+  date.addEventListener(
+    'keydown',
+    e=>{
+
+      if(
+        e.key==='Enter'
+      ){
+
+        registerProduct();
+
+      }
+
+    }
+  );
+
+
+  /* Mostra imediatamente o nome do arquivo escolhido */
+
+  const photoInput=$('photo');
+
+  if(photoInput){
+
+    photoInput.addEventListener(
+      'change',
+      ()=>{
+
+        const file=
+          photoInput.files[0];
+
+        if(!file) return;
+
+        const photoStatus=
+          document.querySelector(
+            '.photo-actions .muted'
+          );
+
+        if(photoStatus){
+
+          photoStatus.textContent=
+            'Foto selecionada';
+
+        }
+
+      }
+    );
+
+  }
+}
+
+
+/* =========================================================
+   CANCELAR
+   ========================================================= */
+
+function cancelProduct(){
+
+  window.location.href=
+    'leitor.html';
+
+}
+
+
+/* =========================================================
+   SALVAR
+   ========================================================= */
+
+async function registerProduct(){
+
+  try{
+
+    if(!selected){
+
+      msg(
+        'Nenhum produto selecionado.',
+        'err'
+      );
+
+      return;
+    }
+
+
+    const dateEl=$('date');
+
+    const date=
+      dateEl
+        ? dateEl.value
+        : '';
+
+
+    const isNew=
+      !selected.nome;
+
+
+    const name=
+      selected.nome ||
+      (
+        $('newName') &&
+        $('newName').value
+          ? $('newName').value
+          : ''
+      ).trim();
+
+
+    if(
+      isNew &&
+      !name
+    ){
+
+      msg(
+        'Digite o nome do produto.',
+        'err'
+      );
+
+      if($('newName')){
+        $('newName').focus();
+      }
+
+      return;
+    }
+
+
+    if(!date){
+
+      msg(
+        'Informe a validade.',
+        'err'
+      );
+
+      if(dateEl){
+        dateEl.focus();
+      }
+
+      return;
+    }
+
+
+    /* -------------------------------------------------------
+       LOJA
+       ------------------------------------------------------- */
+
+    let lojaId=
+      currentUsuario
+        ? currentUsuario.loja_id
+        : null;
+
+
+    if(
+      currentUsuario &&
+      [
+        'gerente_geral',
+        'admin_global'
+      ].includes(
+        currentUsuario.perfil
+      )
+    ){
+
+      const storeEl=
+        $('storeSelect');
+
+
+      lojaId=
+        storeEl
+          ? storeEl.value
+          : '';
+
+
       if(!lojaId){
-        msg('Selecione a loja onde esta validade será cadastrada.','err');
-        if(storeEl) storeEl.focus();
+
+        msg(
+          'Selecione a loja onde esta validade será cadastrada.',
+          'err'
+        );
+
+        if(storeEl){
+          storeEl.focus();
+        }
+
         return;
       }
     }
 
+
     if(!lojaId){
-      msg('Usuário sem loja vinculada.','err');
+
+      msg(
+        'Usuário sem loja vinculada.',
+        'err'
+      );
+
       return;
     }
 
-    const code=normalize(selected.codigo);
-    const saveBtn=$('saveBtn');
-    if(saveBtn){ saveBtn.disabled=true; saveBtn.textContent='SALVANDO...'; }
-    msg('Salvando validade...','');
 
-    // Sessão/usuário e produto podem ser consultados em paralelo.
-    const sessionPromise=supabaseClient.auth.getSession();
-    const cachedProduct=productCache.get(code);
+    /* -------------------------------------------------------
+       BOTÃO
+       ------------------------------------------------------- */
 
-    const [{data:sessionData,error:sessionError},
-           productResult] = await Promise.all([
-      sessionPromise,
-      cachedProduct?.id
-        ? Promise.resolve({data:{
-            id:cachedProduct.id,
-            codigo_barras:cachedProduct.codigo,
-            nome:cachedProduct.nome,
-            foto_url:cachedProduct.foto_url || '',
-            ativo:true
-          },error:null})
-        : supabaseClient
+    const code=
+      normalize(
+        selected.codigo
+      );
+
+
+    const saveBtn=
+      $('saveBtn');
+
+
+    if(saveBtn){
+
+      saveBtn.disabled=true;
+
+      saveBtn.textContent=
+        'SALVANDO...';
+    }
+
+
+    msg(
+      'Salvando validade...',
+      ''
+    );
+
+
+    /* -------------------------------------------------------
+       SESSÃO + PRODUTO EM PARALELO
+       ------------------------------------------------------- */
+
+    const sessionPromise=
+      supabaseClient
+        .auth
+        .getSession();
+
+
+    const cachedProduct=
+      productCache.get(code);
+
+
+    const [
+      {
+        data:sessionData,
+        error:sessionError
+      },
+      productResult
+    ] =
+      await Promise.all([
+
+        sessionPromise,
+
+        cachedProduct?.id
+
+          ?
+
+          Promise.resolve({
+            data:{
+              id:cachedProduct.id,
+              codigo_barras:
+                cachedProduct.codigo,
+              nome:
+                cachedProduct.nome,
+              foto_url:
+                cachedProduct.foto_url || '',
+              ativo:true
+            },
+            error:null
+          })
+
+          :
+
+          supabaseClient
             .from('produtos')
-            .select('id,codigo_barras,nome,foto_url,ativo')
-            .eq('codigo_barras',code)
-            .eq('ativo',true)
+            .select(
+              'id,codigo_barras,nome,foto_url,ativo'
+            )
+            .eq(
+              'codigo_barras',
+              code
+            )
+            .eq(
+              'ativo',
+              true
+            )
             .limit(1)
             .maybeSingle()
-    ]);
 
-    if(sessionError || !sessionData.session){
-      window.location.replace('login.html');
+      ]);
+
+
+    if(
+      sessionError ||
+      !sessionData.session
+    ){
+
+      window.location.replace(
+        'login.html'
+      );
+
       return;
     }
 
-    const usuario=currentUsuario;
-    if(!usuario) throw new Error('Não foi possível identificar o usuário.');
 
-    let {data:produto,error:produtoError}=productResult;
-    if(produtoError) throw new Error('Não foi possível localizar o produto: '+produtoError.message);
+    const usuario=
+      currentUsuario;
 
-    // Se for produto novo, cadastra primeiro na tabela produtos.
+
+    if(!usuario){
+
+      throw new Error(
+        'Não foi possível identificar o usuário.'
+      );
+    }
+
+
+    let {
+      data:produto,
+      error:produtoError
+    } =
+      productResult;
+
+
+    if(produtoError){
+
+      throw new Error(
+        'Não foi possível localizar o produto: '+
+        produtoError.message
+      );
+    }
+
+
+    /* -------------------------------------------------------
+       CRIA PRODUTO SE FOR NOVO
+       ------------------------------------------------------- */
+
     if(!produto){
-      const { data: novoProduto, error: novoProdutoError } = await supabaseClient
-        .from('produtos')
-        .insert({codigo_barras:code,nome:name,ativo:true})
-        .select('id,codigo_barras,nome,foto_url,ativo')
-        .single();
 
-      if(novoProdutoError) throw new Error('Não foi possível cadastrar o produto: '+novoProdutoError.message);
-      produto=novoProduto;
-      productCache.set(code,{
-        id:novoProduto.id,
-        codigo:code,
-        nome:novoProduto.nome || name,
-        foto_url:novoProduto.foto_url || ''
-      });
+      const {
+        data:novoProduto,
+        error:novoProdutoError
+      } =
+        await supabaseClient
+          .from('produtos')
+          .insert({
+            codigo_barras:code,
+            nome:name,
+            ativo:true
+          })
+          .select(
+            'id,codigo_barras,nome,foto_url,ativo'
+          )
+          .single();
+
+
+      if(novoProdutoError){
+
+        throw new Error(
+          'Não foi possível cadastrar o produto: '+
+          novoProdutoError.message
+        );
+      }
+
+
+      produto=
+        novoProduto;
+
+
+      productCache.set(
+        code,
+        {
+          id:novoProduto.id,
+          codigo:code,
+          nome:
+            novoProduto.nome ||
+            name,
+          foto_url:
+            novoProduto.foto_url ||
+            ''
+        }
+      );
+
+
     }else{
-      productCache.set(code,{
-        id:produto.id,
-        codigo:code,
-        nome:produto.nome || name,
-        foto_url:produto.foto_url || ''
-      });
+
+      productCache.set(
+        code,
+        {
+          id:produto.id,
+          codigo:code,
+          nome:
+            produto.nome ||
+            name,
+          foto_url:
+            produto.foto_url ||
+            ''
+        }
+      );
+
     }
 
-    // 3) Evita cadastrar a mesma validade para o mesmo produto na mesma loja.
-    const { data: existente, error: existenteError } = await supabaseClient
-      .from('validades')
-      .select('id')
-      .eq('produto_id', produto.id)
-      .eq('loja_id', lojaId)
-      .eq('validade', date)
-      .limit(1)
-      .maybeSingle();
 
-    if(existenteError) throw new Error('Não foi possível verificar a validade: '+existenteError.message);
-    if(existente){
-      msg('Essa validade já foi cadastrada para este produto nesta loja.','err');
-      if(saveBtn){ saveBtn.disabled=false; saveBtn.textContent=(selected && !selected.nome)?'SALVAR PRODUTO':'SALVAR VALIDADE'; }
-      return;
-    }
+    /* -------------------------------------------------------
+       FOTO
+       ------------------------------------------------------- */
 
-    // 4) Agora sim: grava a validade no Supabase.
-    const { error: validadeError } = await supabaseClient
-      .from('validades')
-      .insert({
-        produto_id: produto.id,
-        loja_id: lojaId,
-        validade: date,
-        cadastrado_por: usuario.id
-      });
+    const file=
+      $('photo') &&
+      $('photo').files[0];
 
-    if(validadeError) throw new Error('Não foi possível salvar a validade: '+validadeError.message);
 
-    // Mantém a foto local por enquanto; a migração das fotos será feita depois.
-    const file=$('photo') && $('photo').files[0];
     if(file){
-      const reader=new FileReader();
-      reader.onload=()=>{
-        try{
-          const map=JSON.parse(localStorage.getItem(PHOTOS)||'{}');
-          map[code]=reader.result;
-          localStorage.setItem(PHOTOS,JSON.stringify(map));
-        }catch(e){ console.warn('Foto não pôde ser salva:',e); }
-        window.location.href='lista_valididades.html';
-      };
-      reader.onerror=()=>{ window.location.href='lista_valididades.html'; };
-      reader.readAsDataURL(file);
+
+      if(saveBtn){
+
+        saveBtn.textContent=
+          'ENVIANDO FOTO...';
+
+      }
+
+
+      msg(
+        'Enviando foto...',
+        ''
+      );
+
+
+      const fotoUrl=
+        await uploadProductPhoto(
+          file,
+          produto.id
+        );
+
+
+      /* Atualiza produtos.foto_url */
+
+      const {
+        error:fotoError
+      } =
+        await supabaseClient
+          .from('produtos')
+          .update({
+            foto_url:fotoUrl
+          })
+          .eq(
+            'id',
+            produto.id
+          );
+
+
+      if(fotoError){
+
+        throw new Error(
+          'A foto foi enviada, mas não foi possível vinculá-la ao produto: '+
+          fotoError.message
+        );
+      }
+
+
+      /* Atualiza objeto atual */
+
+      produto.foto_url=
+        fotoUrl;
+
+
+      productCache.set(
+        code,
+        {
+          id:produto.id,
+          codigo:code,
+          nome:
+            produto.nome ||
+            name,
+          foto_url:
+            fotoUrl
+        }
+      );
+
+    }
+
+
+    /* -------------------------------------------------------
+       VERIFICA VALIDADE DUPLICADA
+       ------------------------------------------------------- */
+
+    if(saveBtn){
+
+      saveBtn.textContent=
+        'VERIFICANDO...';
+
+    }
+
+
+    const {
+      data:existente,
+      error:existenteError
+    } =
+      await supabaseClient
+        .from('validades')
+        .select('id')
+        .eq(
+          'produto_id',
+          produto.id
+        )
+        .eq(
+          'loja_id',
+          lojaId
+        )
+        .eq(
+          'validade',
+          date
+        )
+        .limit(1)
+        .maybeSingle();
+
+
+    if(existenteError){
+
+      throw new Error(
+        'Não foi possível verificar a validade: '+
+        existenteError.message
+      );
+    }
+
+
+    if(existente){
+
+      msg(
+        'Essa validade já foi cadastrada para este produto nesta loja.',
+        'err'
+      );
+
+
+      if(saveBtn){
+
+        saveBtn.disabled=false;
+
+        saveBtn.textContent=
+          (
+            selected &&
+            !selected.nome
+          )
+            ? 'SALVAR PRODUTO'
+            : 'SALVAR VALIDADE';
+
+      }
+
       return;
     }
 
-    window.location.href='lista_valididades.html';
-  } catch(e) {
-    console.error('ERRO AO SALVAR NO SUPABASE:',e);
-    msg('Erro ao salvar: '+(e.message||'verifique as permissões da tabela.'),'err');
-    const saveBtn=$('saveBtn');
-    if(saveBtn){ saveBtn.disabled=false; saveBtn.textContent=(selected && !selected.nome)?'SALVAR PRODUTO':'SALVAR VALIDADE'; }
-  }
-}
-function openFromUrl(){
-  const codigo=new URLSearchParams(window.location.search).get('codigo');
-  if(codigo) find(codigo); else window.location.href='leitor.html';
-}
-(async function iniciarTela(){
-  try{
-    await carregarContextoUsuario();
-    openFromUrl();
+
+    /* -------------------------------------------------------
+       SALVA VALIDADE
+       ------------------------------------------------------- */
+
+    if(saveBtn){
+
+      saveBtn.textContent=
+        'SALVANDO VALIDADE...';
+
+    }
+
+
+    const {
+      error:validadeError
+    } =
+      await supabaseClient
+        .from('validades')
+        .insert({
+          produto_id:produto.id,
+          loja_id:lojaId,
+          validade:date,
+          cadastrado_por:usuario.id
+        });
+
+
+    if(validadeError){
+
+      throw new Error(
+        'Não foi possível salvar a validade: '+
+        validadeError.message
+      );
+    }
+
+
+    /* -------------------------------------------------------
+       FINAL
+       ------------------------------------------------------- */
+
+    window.location.href=
+      'lista_valididades.html';
+
+
   }catch(e){
-    console.error(e);
-    msg('Não foi possível carregar os dados do usuário.','err');
+
+    console.error(
+      'ERRO AO SALVAR NO SUPABASE:',
+      e
+    );
+
+
+    msg(
+      'Erro ao salvar: '+
+      (
+        e.message ||
+        'verifique as permissões.'
+      ),
+      'err'
+    );
+
+
+    const saveBtn=
+      $('saveBtn');
+
+
+    if(saveBtn){
+
+      saveBtn.disabled=false;
+
+      saveBtn.textContent=
+        (
+          selected &&
+          !selected.nome
+        )
+          ? 'SALVAR PRODUTO'
+          : 'SALVAR VALIDADE';
+    }
+
   }
+}
+
+
+/* =========================================================
+   ABRIR PELO CÓDIGO DA URL
+   ========================================================= */
+
+function openFromUrl(){
+
+  const codigo=
+    new URLSearchParams(
+      window.location.search
+    ).get('codigo');
+
+
+  if(codigo){
+
+    find(codigo);
+
+  }else{
+
+    window.location.href=
+      'leitor.html';
+
+  }
+}
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+   ========================================================= */
+
+(async function iniciarTela(){
+
+  try{
+
+    await carregarContextoUsuario();
+
+    openFromUrl();
+
+  }catch(e){
+
+    console.error(e);
+
+    msg(
+      'Não foi possível carregar os dados do usuário.',
+      'err'
+    );
+
+  }
+
 })();
 
 
-/* ===== Microinterações de clique ===== */
+/* =========================================================
+   MICROINTERAÇÕES
+   ========================================================= */
+
 (function(){
-  document.addEventListener('click', function(e){
-    const target = e.target.closest('button, .fab');
-    if(!target) return;
-    const rect = target.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height) * .45;
-    const ripple = document.createElement('span');
-    ripple.className = 'ripple';
-    ripple.style.width = ripple.style.height = size + 'px';
-    ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
-    ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
-    target.appendChild(ripple);
-    setTimeout(()=>ripple.remove(), 520);
-  }, true);
 
-  document.querySelectorAll('input').forEach(function(input){
-    input.addEventListener('focus', function(){ this.classList.add('pop-in'); });
-  });
+  document.addEventListener(
+    'click',
+    function(e){
+
+      const target=
+        e.target.closest(
+          'button, .fab'
+        );
+
+
+      if(!target) return;
+
+
+      const rect=
+        target.getBoundingClientRect();
+
+
+      const size=
+        Math.max(
+          rect.width,
+          rect.height
+        ) * .45;
+
+
+      const ripple=
+        document.createElement(
+          'span'
+        );
+
+
+      ripple.className=
+        'ripple';
+
+
+      ripple.style.width=
+        ripple.style.height=
+          size+'px';
+
+
+      ripple.style.left=
+        (
+          e.clientX -
+          rect.left -
+          size/2
+        )+'px';
+
+
+      ripple.style.top=
+        (
+          e.clientY -
+          rect.top -
+          size/2
+        )+'px';
+
+
+      target.appendChild(
+        ripple
+      );
+
+
+      setTimeout(
+        ()=>ripple.remove(),
+        520
+      );
+
+    },
+    true
+  );
+
+
+  document
+    .querySelectorAll('input')
+    .forEach(
+      function(input){
+
+        input.addEventListener(
+          'focus',
+          function(){
+
+            this.classList.add(
+              'pop-in'
+            );
+
+          }
+        );
+
+      }
+    );
+
 })();
-
-</script></body></html>
+</script>
