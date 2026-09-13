@@ -189,10 +189,9 @@ async function iniciarCamera(){
       audio:false,
       video:{
         facingMode:{ideal:"environment"},
-        width:{ideal:1280},
-        height:{ideal:720},
-        frameRate:{ideal:30,max:30},
-        focusMode:{ideal:"continuous"}
+        width:{ideal:960},
+        height:{ideal:540},
+        frameRate:{ideal:30,max:30}
       }
     });
 
@@ -241,36 +240,39 @@ function iniciarLeituraNativa(){
   if(nativeLoop)return;
   nativeLoop=true;
   let ultimoScan=0;
+  let lendo=false;
 
-  async function loop(){
+  const loop=async()=>{
     if(!nativeLoop || processando)return;
-    if(video.readyState>=2 && nativeDetector){
-      const agora=performance.now();
-      if(agora-ultimoScan>=45){
-        ultimoScan=agora;
-        try{
-          const resultados=await nativeDetector.detect(video);
-          if(resultados && resultados.length){
-            const codigo=normalizarCodigo(resultados[0].rawValue);
-            if(codigo && codigo!==ultimoCodigo){
-              abrirTelaProduto(codigo);
-              return;
-            }
+
+    const agora=performance.now();
+    if(video.readyState>=2 && nativeDetector && !lendo && agora-ultimoScan>=70){
+      ultimoScan=agora;
+      lendo=true;
+      try{
+        const resultados=await nativeDetector.detect(video);
+        if(resultados && resultados.length){
+          const codigo=normalizarCodigo(resultados[0].rawValue);
+          if(codigo && codigo!==ultimoCodigo){
+            abrirTelaProduto(codigo);
+            return;
           }
-        }catch(e){}
+        }
+      }catch(e){}finally{
+        lendo=false;
       }
     }
-    setTimeout(loop,25);
-  }
-  loop();
+    requestAnimationFrame(loop);
+  };
+  requestAnimationFrame(loop);
 }
 
 async function iniciarLeituraZXing(){
   if(scannerControls || !window.ZXingBrowser)throw new Error("ZXing não carregado");
 
   scanner=new ZXingBrowser.BrowserMultiFormatOneDReader(undefined,{
-    delayBetweenScanSuccess:100,
-    delayBetweenScanAttempts:40,
+    delayBetweenScanSuccess:80,
+    delayBetweenScanAttempts:60,
     tryHarder:false
   });
 
@@ -304,10 +306,8 @@ manualCode.addEventListener("keydown",e=>{
   }
 });
 
-window.addEventListener("load",()=>{
-  supabaseClient.auth.getSession().then(({data,error})=>{
-    if(!error && data.session) iniciarCamera();
-  });
+supabaseClient.auth.getSession().then(({data,error})=>{
+  if(!error && data.session) iniciarCamera();
 });
 
 // Se o usuário voltar para o navegador, liga novamente automaticamente.
