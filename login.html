@@ -26,7 +26,7 @@ button{width:100%;border:0;border-radius:16px;height:60px;font-size:16px;font-we
 </head>
 <body>
 <div class="app"><main class="card">
-<div class="logo">Controle de Validade</div>
+<div class="logo">Validades</div>
 <div class="subtitle">Entre com seu e-mail e senha para continuar.</div>
 <form id="loginForm">
 <label for="email">E-mail</label>
@@ -58,6 +58,9 @@ const {error}=await supabaseClient.auth.signInWithPassword({email,password});
 setLoading(false);
 if(error){showMessage('E-mail ou senha incorretos.');return}
 showMessage('Login realizado com sucesso.','ok');
+setTimeout(() => {
+  window.location.href = 'leitor.html';
+}, 500);
 });
 
 forgotBtn.addEventListener('click',async()=>{
