@@ -1,1488 +1,1574 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Validades</title>
-<style>
-  *{box-sizing:border-box}
-  :root{
-    --bg:#f7f7f5;
-    --surface:#fff;
-    --text:#252525;
-    --muted:#8b8b8b;
-    --line:#ecece8;
-    --yellow:#d99d00;
-    --yellow-bg:#fff5d6;
-    --red:#c93636;
-    --red-bg:#fde7e7;
-    --accent:#222;
-  }
-  body{
-    margin:0;
-    background:var(--bg);
-    color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-  }
-  .app{
-    width:100%;
-    max-width:560px;
-    min-height:100vh;
-    margin:auto;
-    background:var(--bg);
-    position:relative;
-    padding-bottom:92px;
-  }
-  header{
-    height:72px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 18px;
-    background:rgba(247,247,245,.96);
-    position:sticky;
-    top:0;
-    z-index:10;
-    border-bottom:1px solid rgba(0,0,0,.035);
-  }
-  .title{display:flex;align-items:center;gap:10px}
-  .back{
-    width:34px;height:34px;border:0;background:transparent;
-    font-size:24px;line-height:1;cursor:pointer;color:#333;padding:0;
-  }
-  h1{
-    margin:0;font-size:22px;font-weight:700;letter-spacing:-.4px;
-  }
-  .header-actions{display:flex;gap:5px;align-items:center}
-  .dashboard-btn{
-    height:36px;
-    border:1px solid #e3e3df;
-    border-radius:18px;
-    background:#fff;
-    color:#222;
-    padding:0 12px;
-    font-size:11px;
-    font-weight:800;
-    cursor:pointer;
-    display:none;
-    align-items:center;
-    gap:6px;
-    white-space:nowrap;
-  }
-  .dashboard-btn.visible{display:flex}
-  .dashboard-btn:active{background:#f0f0ed}
-  .icon-btn{
-    width:36px;height:36px;border:0;border-radius:50%;
-    background:transparent;cursor:pointer;font-size:19px;color:#555;
-  }
-  .icon-btn:active{background:#e9e9e6}
-
-  .account-wrap{display:none;padding:10px 16px 12px;background:var(--bg)}
-  .account-card{
-    background:#fff;border:1px solid var(--line);border-radius:16px;
-    padding:13px 14px;box-shadow:0 1px 2px rgba(0,0,0,.025);
-  }
-  .account-label{
-    font-size:11px;color:var(--muted);margin-bottom:7px;font-weight:700;
-    text-transform:uppercase;letter-spacing:.3px;
-  }
-  .account-row{
-    display:flex;align-items:center;gap:8px;font-size:13px;line-height:1.5;
-  }
-  .account-row + .account-row{margin-top:3px}
-  .account-icon{width:18px;text-align:center;color:#777}
-  .account-value{
-    min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  }
-  .account-logout{
-    margin-top:10px;width:100%;height:40px;border:0;border-radius:11px;
-    background:#222;color:#fff;font-size:12px;font-weight:800;cursor:pointer;
-  }
-
-  .search-wrap{display:none;padding:0 16px 10px;background:var(--bg)}
-  .search-wrap.open{display:block}
-  .search{
-    width:100%;border:1px solid #e2e2dd;background:#fff;border-radius:13px;
-    padding:10px 13px;font-size:14px;outline:none;
-  }
-
-  .content{padding:10px 14px 0}
-  .summary{padding:4px 4px 12px;color:var(--muted);font-size:12px}
-
-  .item{
-    display:flex;gap:12px;align-items:stretch;background:var(--surface);
-    border:1px solid var(--line);border-radius:16px;padding:11px;margin-bottom:9px;
-    box-shadow:0 1px 2px rgba(0,0,0,.025);
-    cursor:pointer;-webkit-tap-highlight-color:transparent;
-  }
-  .item:active{transform:scale(.995)}
-  .item{content-visibility:auto;contain-intrinsic-size:92px}
-  .item::after{
-    content:'›';align-self:center;color:#aaa;font-size:22px;padding-left:2px
-  }
-
-  .photo{
-    width:58px;height:58px;flex:0 0 58px;border-radius:12px;overflow:hidden;
-    background:#f0f0ed;display:flex;align-items:center;justify-content:center;
-    color:#aaa;font-size:22px;
-  }
-  .photo img{width:100%;height:100%;object-fit:cover}
-
-  .info{min-width:0;flex:1}
-  .topline{
-    display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:3px;
-  }
-  .date{font-size:13px;font-weight:750;letter-spacing:.05px}
-  .status{
-    flex:0 0 auto;border-radius:999px;padding:4px 8px;font-size:10px;
-    font-weight:750;white-space:nowrap;
-  }
-  .normal{color:#707070;background:#f1f1ef}
-  .warning{color:#966900;background:var(--yellow-bg)}
-  .expired{color:var(--red);background:var(--red-bg)}
-  .name{
-    font-size:14px;font-weight:650;line-height:1.25;margin-bottom:3px;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  }
-  .code{font-size:11px;color:var(--muted);margin-bottom:5px}
-  .store{
-    font-size:10.5px;color:#999;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  }
-  .days{font-size:11px;font-weight:650;margin-top:5px}
-  .days.warning,.days.expired{background:transparent;padding:0}
-
-  .empty{text-align:center;padding:75px 25px;color:#999}
-  .empty-icon{font-size:34px;margin-bottom:10px}
-  .empty strong{display:block;color:#444;font-size:15px;margin-bottom:5px}
-  .empty span{font-size:12px;line-height:1.5}
-
-  .fab{
-    position:fixed;
-    right:max(18px,calc((100vw - 560px)/2 + 18px));
-    bottom:22px;width:54px;height:54px;border:0;border-radius:50%;
-    background:#222;color:#fff;font-size:29px;line-height:54px;
-    box-shadow:0 8px 22px rgba(0,0,0,.18);cursor:pointer;z-index:20;
-  }
-  .fab:active{transform:scale(.96)}
-
-  .modal-backdrop{
-    position:fixed;inset:0;background:rgba(0,0,0,.38);display:none;
-    align-items:flex-end;justify-content:center;z-index:100;
-  }
-  .modal-backdrop.open{display:flex}
-  .modal{
-    width:min(560px,100%);background:#fff;border-radius:22px 22px 0 0;
-    padding:20px 18px calc(20px + env(safe-area-inset-bottom));
-    box-shadow:0 -8px 30px rgba(0,0,0,.18)
-  }
-  .modal h2{margin:0 0 5px;font-size:18px}
-  .modal p{margin:0 0 16px;color:#777;font-size:13px;line-height:1.4}
-  .modal-date{
-    width:100%;height:52px;border:1px solid #ddd;border-radius:13px;
-    padding:10px 12px;font-size:18px;font-weight:700;margin-bottom:12px
-  }
-  .modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-  .modal-actions button{
-    height:50px;border:0;border-radius:13px;font-weight:800;cursor:pointer
-  }
-  .btn-save-date{background:#222;color:#fff}
-  .btn-delete{background:#fde7e7;color:#b32626}
-  .btn-close{
-    width:100%;height:44px;border:0;background:transparent;color:#777;
-    font-weight:700;margin-top:5px;cursor:pointer
-  }
-  .filters-wrap{
-    display:none;
-    padding:0 16px 10px;
-    background:var(--bg);
-  }
-  .filters-wrap.open{display:block}
-  .access-badge{
-    display:inline-flex;
-    align-items:center;
-    min-height:28px;
-    padding:6px 10px;
-    margin-bottom:8px;
-    border-radius:999px;
-    background:#ececea;
-    color:#555;
-    font-size:11px;
-    font-weight:800;
-  }
-  .filter-row{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    margin-top:7px;
-  }
-  .filter-row label{
-    flex:0 0 78px;
-    font-size:11px;
-    color:#777;
-    font-weight:800;
-  }
-  .filter-row select{
-    flex:1;
-    min-width:0;
-    height:42px;
-    border:1px solid #e2e2dd;
-    border-radius:12px;
-    background:#fff;
-    color:#333;
-    padding:0 11px;
-    font-size:13px;
-    outline:none;
-  }
-  .filter-row select:focus{
-    border-color:#bbb;
-    box-shadow:0 0 0 3px rgba(0,0,0,.05);
-  }
-  .filter-row.hidden{display:none}
-
-  @media(max-width:560px){.app{max-width:none}}
-</style>
-</head>
-
-<body>
-
-<div class="app">
-
-  <header>
-    <div class="title">
-      <button class="back" onclick="history.back()" aria-label="Voltar">‹</button>
-      <h1>Validades</h1>
-    </div>
-
-    <div class="header-actions">
-      <button class="dashboard-btn" id="dashboardBtn" type="button" aria-label="Abrir Dashboard" title="Abrir Dashboard">▣ Dashboard</button>
-      <button class="icon-btn" id="accountBtn" aria-label="Sua conta" title="Sua conta">◉</button>
-      <button class="icon-btn" id="searchBtn" aria-label="Pesquisar" title="Pesquisar">⌕</button>
-    </div>
-  </header>
-
-  <div class="account-wrap" id="accountWrap">
-    <div class="account-card">
-      <div class="account-label">Sua conta</div>
-
-      <div class="account-row">
-        <span class="account-icon">✉</span>
-        <span class="account-value" id="accountEmail">Carregando...</span>
-      </div>
-
-      <div class="account-row">
-        <span class="account-icon">⌂</span>
-        <span class="account-value" id="accountStore">Carregando loja...</span>
-      </div>
-
-      <button class="account-logout" id="logoutBtn" type="button">
-        SAIR
-      </button>
-    </div>
-  </div>
-
-  <div class="search-wrap" id="searchWrap">
-    <input
-      class="search"
-      id="searchInput"
-      type="search"
-      placeholder="Pesquisar produto ou código"
-    >
-  </div>
-
-  <div class="filters-wrap" id="filtersWrap">
-    <div class="access-badge" id="accessBadge"></div>
-    <div class="filter-row" id="storeFilterRow">
-      <label for="storeFilter">Loja</label>
-      <select id="storeFilter">
-        <option value="">Todas as lojas</option>
-      </select>
-    </div>
-    <div class="filter-row" id="employeeFilterRow">
-      <label for="employeeFilter">Funcionário</label>
-      <select id="employeeFilter">
-        <option value="">Todos os funcionários</option>
-      </select>
-    </div>
-  </div>
-
-  <main class="content">
-    <div class="summary" id="summary"></div>
-    <section id="list"></section>
-  </main>
-
-  <button
-    class="fab"
-    type="button"
-    onclick="voltarAoLeitor()"
-    aria-label="Cadastrar validade"
-  >+</button>
-
-</div>
-
-<div
-  class="modal-backdrop"
-  id="editModal"
-  role="dialog"
-  aria-modal="true"
-  aria-labelledby="modalTitle"
->
-  <div class="modal">
-
-    <h2 id="modalTitle">Editar validade</h2>
-
-    <p id="modalProduct"></p>
-
-    <input
-      id="modalDate"
-      class="modal-date"
-      type="date"
-    >
-
-    <div class="modal-actions">
-      <button class="btn-save-date" id="modalSave">
-        SALVAR DATA
-      </button>
-
-      <button class="btn-delete" id="modalDelete">
-        EXCLUIR
-      </button>
-    </div>
-
-    <button class="btn-close" id="modalClose">
-      Cancelar
-    </button>
-
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
-const SUPABASE_URL = 'https://siuvsahkjfyzdcrskleg.supabase.co';
+const byCode = new Map(PRODUCTS.map(p => [String(p.codigo), p]));
+const productCache = new Map();
 
-const SUPABASE_PUBLISHABLE_KEY =
-  'sb_publishable_At--bKaS3ZiZA0dmyN5FIQ_5WF735Nl';
+const KEY = 'validades_v2';
+const PRODUTOS_KEY = 'produtos_cadastrados_v1';
 
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
-);
+function readProductCatalog(){
+  try{
+    const raw = localStorage.getItem(PRODUTOS_KEY);
+    const value = raw ? JSON.parse(raw) : [];
+    return Array.isArray(value) ? value : [];
+  }catch(e){
+    console.warn('Erro lendo catálogo de produtos:', e);
+    return [];
+  }
+}
 
-/* =========================================================
-   SESSÃO
-========================================================= */
+function saveProductToCatalog(codigo,nome){
+  const code=normalize(codigo);
+  const name=String(nome ?? '').trim();
+  if(!code || !name) return;
 
-let sessionUserPromise=null;
+  try{
+    const catalog=readProductCatalog();
+    const index=catalog.findIndex(
+      p=>normalize(p.codigo)===code
+    );
 
-async function getSessionAndUser(){
-  if(sessionUserPromise) return sessionUserPromise;
-
-  sessionUserPromise=(async()=>{
-    const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
-
-    if(sessionError){
-      console.error('Erro ao verificar sessão:',sessionError);
-      window.location.replace('login.html');
-      return null;
-    }
-    if(!sessionData.session){
-      window.location.replace('login.html');
-      return null;
-    }
-
-    const authUser=sessionData.session.user;
-    const {data:usuario,error:usuarioError}=await supabaseClient
-      .from('usuarios')
-      .select('id,auth_user_id,loja_id,perfil,nome,ativo')
-      .eq('auth_user_id',authUser.id)
-      .maybeSingle();
-
-    if(usuarioError){
-      console.error('Erro ao buscar usuário:',usuarioError);
-      alert('Não foi possível identificar seu usuário.');
-      return null;
-    }
-    if(!usuario){
-      alert('Usuário não encontrado na tabela usuarios.');
-      return null;
-    }
-    if(usuario.ativo === false){
-      alert('Seu usuário está inativo.');
-      await supabaseClient.auth.signOut();
-      window.location.replace('login.html');
-      return null;
-    }
-    if(usuario.perfil !== 'admin_global' && !usuario.loja_id){
-      alert('Seu usuário ainda não possui uma loja vinculada.');
-      return null;
+    if(index>=0){
+      catalog[index]={
+        ...catalog[index],
+        codigo:code,
+        nome:name
+      };
+    }else{
+      catalog.push({
+        codigo:code,
+        nome:name
+      });
     }
 
-    return {session:sessionData.session,authUser,usuario};
-  })();
-
-  return sessionUserPromise;
+    localStorage.setItem(
+      PRODUTOS_KEY,
+      JSON.stringify(catalog)
+    );
+  }catch(e){
+    console.warn(
+      'Produto não pôde ser salvo no catálogo:',
+      e
+    );
+  }
 }
 
 
 /* =========================================================
-   CONTA / LOJA
-========================================================= */
+   BUSCA PRODUTO
+   ========================================================= */
 
-async function carregarConta(){
+async function getProductByCode(codigo){
+  const code=normalize(codigo);
+  if(!code) return null;
 
-  const emailEl = document.getElementById('accountEmail');
-  const storeEl = document.getElementById('accountStore');
+  // 1) Cache da sessão
+  const cached=productCache.get(code);
 
-  const dados = await getSessionAndUser();
-
-  if(!dados){
-    return;
+  if(cached){
+    return cached;
   }
 
-  emailEl.textContent =
-    dados.authUser.email || 'E-mail não informado';
+  // 2) Catálogo fixo
+  const fixedProduct=byCode.get(code);
 
-  const perfilLabel = {
-    funcionario:'Funcionário',
-    gerente:'Gerente',
-    gerente_geral:'Gerente geral',
-    admin_global:'Administrador global'
-  }[dados.usuario.perfil] || 'Usuário';
+  if(fixedProduct){
 
-  if(dados.usuario.perfil === 'admin_global'){
-    storeEl.textContent = `Acesso: ${perfilLabel} • Todas as lojas`;
-    return;
+    const localProduct={
+      codigo:code,
+      nome:fixedProduct.nome,
+      foto_url:''
+    };
+
+    productCache.set(
+      code,
+      localProduct
+    );
+
+    // Busca dados atualizados em segundo plano
+    supabaseClient
+      .from('produtos')
+      .select(
+        'id,codigo_barras,nome,foto_url,ativo'
+      )
+      .eq('codigo_barras',code)
+      .eq('ativo',true)
+      .limit(1)
+      .maybeSingle()
+      .then(({data,error})=>{
+
+        if(!error && data){
+
+          productCache.set(
+            code,
+            {
+              id:data.id,
+              codigo:normalize(data.codigo_barras),
+              nome:data.nome || localProduct.nome,
+              foto_url:data.foto_url || ''
+            }
+          );
+
+          // Se a tela ainda estiver mostrando este produto,
+          // atualiza a foto automaticamente.
+          if(
+            selected &&
+            normalize(selected.codigo)===code
+          ){
+            selected={
+              id:data.id,
+              codigo:normalize(data.codigo_barras),
+              nome:data.nome || localProduct.nome,
+              foto_url:data.foto_url || ''
+            };
+
+            renderProduct();
+          }
+        }
+
+      })
+      .catch(()=>{});
+
+    return localProduct;
   }
 
-  const {
-    data: loja,
-    error: lojaError
-  } = await supabaseClient
-    .from('lojas')
-    .select('nome')
-    .eq('id', dados.usuario.loja_id)
+
+  // 3) Catálogo local antigo
+  const catalogProduct=readProductCatalog().find(
+    p=>normalize(p.codigo)===code
+  );
+
+  if(
+    catalogProduct &&
+    catalogProduct.nome
+  ){
+
+    const localProduct={
+      codigo:code,
+      nome:catalogProduct.nome,
+      foto_url:''
+    };
+
+    productCache.set(
+      code,
+      localProduct
+    );
+
+    return localProduct;
+  }
+
+
+  // 4) Supabase
+  const {data,error}=await supabaseClient
+    .from('produtos')
+    .select(
+      'id,codigo_barras,nome,foto_url,ativo'
+    )
+    .eq('codigo_barras',code)
+    .eq('ativo',true)
+    .limit(1)
     .maybeSingle();
 
-  if(lojaError){
-    console.error('Erro ao buscar loja:', lojaError);
-    storeEl.textContent = `Acesso: ${perfilLabel} • Loja não identificada`;
-    return;
+  if(error){
+    console.error(
+      'Erro consultando o Supabase:',
+      error
+    );
+
+    throw new Error(
+      'Não foi possível consultar o cadastro de produtos.'
+    );
   }
 
-  storeEl.textContent =
-    loja?.nome
-      ? `Acesso: ${perfilLabel} • Loja: ${loja.nome}`
-      : `Acesso: ${perfilLabel} • Loja não identificada`;
+  if(data){
+
+    const product={
+      id:data.id,
+      codigo:normalize(data.codigo_barras),
+      nome:data.nome || '',
+      foto_url:data.foto_url || ''
+    };
+
+    productCache.set(
+      code,
+      product
+    );
+
+    return product;
+  }
+
+  return null;
 }
 
 
 /* =========================================================
-   BOTÃO CONTA
-========================================================= */
+   UPLOAD DA FOTO
+   ========================================================= */
 
-document.getElementById('accountBtn').addEventListener('click', () => {
+async function uploadProductPhoto(file,produtoId){
 
-  const wrap = document.getElementById('accountWrap');
+  if(!file || !produtoId){
+    return '';
+  }
 
-  wrap.style.display =
-    wrap.style.display === 'block'
-      ? 'none'
-      : 'block';
+  // Verifica tamanho
+  if(file.size > 10 * 1024 * 1024){
+    throw new Error(
+      'A foto é muito grande. Escolha uma imagem de até 10 MB.'
+    );
+  }
 
-});
+  // Descobre extensão
+  let extension=
+    (file.name.split('.').pop() || 'jpg')
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g,'');
+
+  const allowedExtensions=[
+    'jpg',
+    'jpeg',
+    'png',
+    'webp',
+    'gif'
+  ];
+
+  if(
+    !allowedExtensions.includes(extension)
+  ){
+    extension='jpg';
+  }
+
+  /*
+    Cada produto terá seu próprio arquivo.
+
+    Exemplo:
+
+    fotos_produtos/
+      produtos/
+        157.jpg
+  */
+
+  const filePath=
+    `produtos/${produtoId}.${extension}`;
+
+
+  /* -------------------------------------------------------
+     Se já existe uma foto com outra extensão,
+     tentamos remover versões antigas.
+     ------------------------------------------------------- */
+
+  const possibleFiles=[
+    'jpg',
+    'jpeg',
+    'png',
+    'webp',
+    'gif'
+  ].map(
+    ext=>`produtos/${produtoId}.${ext}`
+  );
+
+  try{
+
+    await supabaseClient
+      .storage
+      .from('fotos_produtos')
+      .remove(possibleFiles);
+
+  }catch(e){
+
+    // Não impede o novo upload
+    console.warn(
+      'Não foi possível remover fotos antigas:',
+      e
+    );
+  }
+
+
+  /* -------------------------------------------------------
+     Upload
+     ------------------------------------------------------- */
+
+  const {
+    error:uploadError
+  } = await supabaseClient
+    .storage
+    .from('fotos_produtos')
+    .upload(
+      filePath,
+      file,
+      {
+        upsert:true,
+        cacheControl:'31536000',
+        contentType:
+          file.type ||
+          (
+            extension==='jpg'
+              ? 'image/jpeg'
+              : `image/${extension}`
+          )
+      }
+    );
+
+
+  if(uploadError){
+
+    console.error(
+      'Erro ao enviar foto:',
+      uploadError
+    );
+
+    throw new Error(
+      'Não foi possível enviar a foto: '+
+      uploadError.message
+    );
+  }
+
+
+  /* -------------------------------------------------------
+     URL pública
+     ------------------------------------------------------- */
+
+  const {
+    data:publicData
+  } = supabaseClient
+    .storage
+    .from('fotos_produtos')
+    .getPublicUrl(filePath);
+
+
+  if(
+    !publicData ||
+    !publicData.publicUrl
+  ){
+    throw new Error(
+      'Não foi possível obter o endereço da foto.'
+    );
+  }
+
+
+  /*
+    Adicionamos uma versão para evitar
+    que o navegador mostre a foto antiga
+    em cache.
+  */
+
+  return (
+    publicData.publicUrl+
+    '?v='+Date.now()
+  );
+}
 
 
 /* =========================================================
-   LOGOUT
-========================================================= */
+   VARIÁVEIS
+   ========================================================= */
 
-document.getElementById('logoutBtn').addEventListener(
-  'click',
-  async () => {
+let selected=null;
 
-    const { error } =
-      await supabaseClient.auth.signOut();
+const $=id=>
+  document.getElementById(id);
 
-    if(error){
 
-      console.error(error);
+function msg(
+  text,
+  type='ok'
+){
 
-      alert(
-        'Não foi possível sair. Tente novamente.'
+  $('message').innerHTML=
+    text
+      ? `<div class="msg ${type}">${text}</div>`
+      : '';
+}
+
+
+function normalize(code){
+
+  return String(
+    code ?? ''
+  ).replace(/\D/g,'');
+}
+
+
+function esc(s){
+
+  return String(
+    s ?? ''
+  ).replace(
+    /[&<>"']/g,
+    m=>({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#39;'
+    }[m])
+  );
+}
+
+
+/* =========================================================
+   BUSCAR
+   ========================================================= */
+
+async function find(code){
+
+  const c=normalize(code);
+
+  if(!c){
+
+    msg(
+      'Código de barras inválido.',
+      'err'
+    );
+
+    return;
+  }
+
+  try{
+
+    msg(
+      'Consultando produto...',
+      ''
+    );
+
+    const product=
+      await getProductByCode(c);
+
+    selected=
+      product ||
+      {
+        codigo:c,
+        nome:'',
+        foto_url:''
+      };
+
+    renderProduct();
+
+  }catch(e){
+
+    console.error(
+      'Erro ao buscar produto:',
+      e
+    );
+
+    msg(
+      e.message ||
+      'Erro ao consultar o produto.',
+      'err'
+    );
+  }
+}
+
+
+/* =========================================================
+   USUÁRIO / LOJAS
+   ========================================================= */
+
+let currentUsuario=null;
+let lojasDisponiveis=[];
+
+
+async function carregarContextoUsuario(){
+
+  const {
+    data:{session},
+    error:sessionError
+  } =
+    await supabaseClient
+      .auth
+      .getSession();
+
+
+  if(
+    sessionError ||
+    !session
+  ){
+
+    window.location.replace(
+      'login.html'
+    );
+
+    throw new Error(
+      'Sessão não encontrada.'
+    );
+  }
+
+
+  const {
+    data:usuario,
+    error:usuarioError
+  } =
+    await supabaseClient
+      .from('usuarios')
+      .select(
+        'id,loja_id,perfil,nome,ativo'
+      )
+      .eq(
+        'auth_user_id',
+        session.user.id
+      )
+      .maybeSingle();
+
+
+  if(usuarioError){
+
+    throw new Error(
+      'Não foi possível identificar o usuário: '+
+      usuarioError.message
+    );
+  }
+
+
+  if(
+    !usuario ||
+    usuario.ativo===false
+  ){
+
+    throw new Error(
+      'Usuário não encontrado ou inativo.'
+    );
+  }
+
+
+  currentUsuario=usuario;
+
+
+  if(
+    usuario.perfil==='gerente_geral' ||
+    usuario.perfil==='admin_global'
+  ){
+
+    const {
+      data:lojas,
+      error:lojasError
+    } =
+      await supabaseClient
+        .from('lojas')
+        .select(
+          'id,nome,ativo'
+        )
+        .eq(
+          'ativo',
+          true
+        )
+        .order('nome');
+
+
+    if(lojasError){
+
+      throw new Error(
+        'Não foi possível carregar as lojas: '+
+        lojasError.message
+      );
+    }
+
+
+    lojasDisponiveis=
+      lojas || [];
+
+  }else{
+
+    lojasDisponiveis=[];
+  }
+}
+
+
+/* =========================================================
+   RENDERIZA PRODUTO
+   ========================================================= */
+
+function renderProduct(){
+
+  const p=selected;
+
+  const isNew=!p.nome;
+
+  const savedPhoto=
+    p.foto_url || '';
+
+
+  $('productCard')
+    .classList
+    .remove('hidden');
+
+
+  $('productCard').innerHTML=`
+
+    ${
+      savedPhoto
+
+      ?
+
+      `<img
+        class="product-photo"
+        src="${esc(savedPhoto)}"
+        alt="Foto do produto"
+        loading="eager"
+        decoding="async"
+      >`
+
+      :
+
+      `<div class="no-photo">
+        📦
+        <span>
+          ${
+            isNew
+              ? 'Adicionar foto do produto'
+              : 'Foto ainda não cadastrada'
+          }
+        </span>
+      </div>`
+    }
+
+
+    <div class="product-name">
+      ${
+        isNew
+          ? 'Produto novo'
+          : esc(p.nome)
+      }
+    </div>
+
+
+    <div class="product-code">
+      ${esc(p.codigo)}
+    </div>
+
+
+    ${
+      isNew
+
+      ?
+
+      `
+      <div class="new-label">
+        Nome do produto
+      </div>
+
+      <input
+        id="newName"
+        autocomplete="off"
+        placeholder="Digite o nome do produto"
+      >
+      `
+
+      :
+
+      ''
+    }
+
+
+    <div
+      style="margin-top:${isNew?'14px':'0'}"
+    >
+
+      <div class="date-label">
+        VALIDADE
+      </div>
+
+      <input
+        id="date"
+        class="date-input"
+        type="date"
+      >
+
+    </div>
+
+
+    ${
+      (
+        currentUsuario &&
+        [
+          'gerente_geral',
+          'admin_global'
+        ].includes(
+          currentUsuario.perfil
+        )
+      )
+
+      ?
+
+      `
+      <div class="store-select-wrap">
+
+        <label
+          for="storeSelect"
+        >
+          Loja onde esta validade será cadastrada
+        </label>
+
+        <select id="storeSelect">
+
+          <option value="">
+            Selecione a loja
+          </option>
+
+          ${
+            lojasDisponiveis
+              .map(
+                l=>
+                  `<option value="${l.id}">
+                    ${esc(l.nome)}
+                  </option>`
+              )
+              .join('')
+          }
+
+        </select>
+
+      </div>
+      `
+
+      :
+
+      ''
+    }
+
+
+    <div class="photo-actions">
+
+      <span class="muted">
+        ${
+          savedPhoto
+            ? 'Foto cadastrada'
+            : 'Sem foto'
+        }
+      </span>
+
+
+      <label
+        class="photo-btn"
+        for="photo"
+      >
+        📷 ${
+          savedPhoto
+            ? 'Trocar foto'
+            : 'Adicionar foto'
+        }
+      </label>
+
+
+      <input
+        id="photo"
+        class="hidden"
+        type="file"
+        accept="image/*"
+        capture="environment"
+      >
+
+    </div>
+
+
+    <button
+      id="saveBtn"
+      class="save"
+      type="button"
+      onclick="registerProduct()"
+    >
+      ${
+        isNew
+          ? 'SALVAR PRODUTO'
+          : 'SALVAR VALIDADE'
+      }
+    </button>
+
+
+    <button
+      class="cancel"
+      type="button"
+      onclick="cancelProduct()"
+    >
+      Cancelar
+    </button>
+  `;
+
+
+  const date=$('date');
+
+
+  if(isNew){
+
+    $('newName').focus();
+
+  }else{
+
+    date.focus();
+
+  }
+
+
+  date.addEventListener(
+    'keydown',
+    e=>{
+
+      if(
+        e.key==='Enter'
+      ){
+
+        registerProduct();
+
+      }
+
+    }
+  );
+
+
+  /* Mostra imediatamente o nome do arquivo escolhido */
+
+  const photoInput=$('photo');
+
+  if(photoInput){
+
+    photoInput.addEventListener(
+      'change',
+      ()=>{
+
+        const file=
+          photoInput.files[0];
+
+        if(!file) return;
+
+        const photoStatus=
+          document.querySelector(
+            '.photo-actions .muted'
+          );
+
+        if(photoStatus){
+
+          photoStatus.textContent=
+            'Foto selecionada';
+
+        }
+
+      }
+    );
+
+  }
+}
+
+
+/* =========================================================
+   CANCELAR
+   ========================================================= */
+
+function cancelProduct(){
+
+  window.location.href=
+    'leitor.html';
+
+}
+
+
+/* =========================================================
+   SALVAR
+   ========================================================= */
+
+async function registerProduct(){
+
+  try{
+
+    if(!selected){
+
+      msg(
+        'Nenhum produto selecionado.',
+        'err'
       );
 
       return;
     }
 
-    window.location.replace('login.html');
-  }
-);
+
+    const dateEl=$('date');
+
+    const date=
+      dateEl
+        ? dateEl.value
+        : '';
 
 
-/* =========================================================
-   CONFIGURAÇÕES LOCAIS
-========================================================= */
-
-const PHOTOS = 'fotos_produtos_v2';
-
-let photoMap = {};
-
-try{
-  photoMap =
-    JSON.parse(
-      localStorage.getItem(PHOTOS) || '{}'
-    );
-}catch(e){
-  photoMap = {};
-}
+    const isNew=
+      !selected.nome;
 
 
-/* =========================================================
-   DADOS
-========================================================= */
-
-let records = [];
-
-let selectedRecordId = null;
-
-let currentLojaId = null;
-let currentPerfil = null;
-let currentUsuarioId = null;
-let stores = [];
-let employees = [];
+    const name=
+      selected.nome ||
+      (
+        $('newName') &&
+        $('newName').value
+          ? $('newName').value
+          : ''
+      ).trim();
 
 
-/* =========================================================
-   NORMALIZAÇÃO
-========================================================= */
+    if(
+      isNew &&
+      !name
+    ){
 
-function normalizeCode(value){
+      msg(
+        'Digite o nome do produto.',
+        'err'
+      );
 
-  return String(value ?? '')
-    .replace(/\D/g,'');
+      if($('newName')){
+        $('newName').focus();
+      }
 
-}
-
-
-/* =========================================================
-   PRODUTO
-========================================================= */
-
-function getProductName(record){
-
-  return (
-    record.nome ||
-    record.produto_nome ||
-    'Produto sem nome'
-  );
-
-}
-
-
-/* =========================================================
-   FOTO
-========================================================= */
-
-function getPhoto(record){
-
-  const code =
-    normalizeCode(record.codigo);
-
-  return (
-    record.foto_url ||
-    record.foto ||
-    photoMap[record.codigo] ||
-    photoMap[code] ||
-    ''
-  );
-
-}
-
-
-/* =========================================================
-   DATAS
-========================================================= */
-
-function parseLocalDate(value){
-
-  if(!value){
-    return null;
-  }
-
-  const parts =
-    String(value)
-      .split('-')
-      .map(Number);
-
-  if(
-    parts.length !== 3 ||
-    parts.some(Number.isNaN)
-  ){
-    return null;
-  }
-
-  return new Date(
-    parts[0],
-    parts[1] - 1,
-    parts[2]
-  );
-
-}
-
-
-function daysUntil(value){
-
-  const d =
-    parseLocalDate(value);
-
-  if(!d){
-    return null;
-  }
-
-  const today = new Date();
-
-  today.setHours(0,0,0,0);
-
-  d.setHours(0,0,0,0);
-
-  return Math.round(
-    (d - today) / 86400000
-  );
-
-}
-
-
-function formatDate(value){
-
-  const d =
-    parseLocalDate(value);
-
-  if(!d){
-    return value || 'Data não informada';
-  }
-
-  return d.toLocaleDateString(
-    'pt-BR',
-    {
-      day:'2-digit',
-      month:'2-digit',
-      year:'numeric'
+      return;
     }
-  );
 
-}
 
+    if(!date){
 
-/* =========================================================
-   STATUS
-========================================================= */
+      msg(
+        'Informe a validade.',
+        'err'
+      );
 
-function statusFor(days){
+      if(dateEl){
+        dateEl.focus();
+      }
 
-  if(days === null){
+      return;
+    }
 
-    return {
-      kind:'normal',
-      label:'—'
-    };
 
-  }
+    /* -------------------------------------------------------
+       LOJA
+       ------------------------------------------------------- */
 
-  if(days < 0){
+    let lojaId=
+      currentUsuario
+        ? currentUsuario.loja_id
+        : null;
 
-    return {
-      kind:'expired',
-      label:'VENCIDO'
-    };
 
-  }
+    if(
+      currentUsuario &&
+      [
+        'gerente_geral',
+        'admin_global'
+      ].includes(
+        currentUsuario.perfil
+      )
+    ){
 
-  if(days <= 10){
+      const storeEl=
+        $('storeSelect');
 
-    return {
-      kind:'warning',
-      label:'ATENÇÃO'
-    };
 
-  }
+      lojaId=
+        storeEl
+          ? storeEl.value
+          : '';
 
-  return {
-    kind:'normal',
-    label:'OK'
-  };
 
-}
+      if(!lojaId){
 
-
-function daysText(days){
-
-  if(days === null){
-    return '';
-  }
-
-  if(days < 0){
-
-    const n =
-      Math.abs(days);
-
-    return n === 1
-      ? 'Vencido há 1 dia'
-      : `Vencido há ${n} dias`;
-
-  }
-
-  if(days === 0){
-    return 'Vence hoje';
-  }
-
-  if(days === 1){
-    return 'Falta 1 dia';
-  }
-
-  return `Faltam ${days} dias`;
-
-}
-
-
-/* =========================================================
-   LOJA
-========================================================= */
-
-function getStore(record){
-
-  return (
-    record.loja ||
-    record.lojaNome ||
-    record.store ||
-    record.estabelecimento ||
-    record.loja_nome ||
-    ''
-  );
-
-}
-
-
-/* =========================================================
-   BUSCAR VALIDADES NO SUPABASE
-========================================================= */
-
-async function carregarValidades(){
-
-  const list = document.getElementById('list');
-  const summary = document.getElementById('summary');
-
-  list.innerHTML = `
-    <div class="empty">
-      <div class="empty-icon">◌</div>
-      <strong>Carregando...</strong>
-      <span>Buscando as validades cadastradas.</span>
-    </div>
-  `;
-
-  const dados = await getSessionAndUser();
-  if(!dados) return;
-
-  currentLojaId = dados.usuario.loja_id;
-  currentPerfil = dados.usuario.perfil;
-  currentUsuarioId = dados.usuario.id;
-
-  configurarAcesso(dados);
-
-  // O RLS do Supabase decide quais validades o usuário realmente pode ver.
-  // Por isso não filtramos loja_id aqui: gerente_geral e admin_global precisam
-  // conseguir receber registros de todas as lojas.
-  // As três consultas são independentes. Fazê-las em paralelo reduz bastante
-  // o tempo de espera da tela, principalmente em conexões móveis.
-  const [valididadesResult, lojasResult, usuariosResult] = await Promise.all([
-    supabaseClient
-      .from('validades')
-      .select(`
-        id,
-        validade,
-        produto_id,
-        loja_id,
-        cadastrado_por,
-        produtos (
-          id,
-          codigo_barras,
-          nome,
-          foto_url,
-          ativo
-        )
-      `)
-      .order('validade', {ascending:true}),
-
-    supabaseClient
-      .from('lojas')
-      .select('id,nome,ativo')
-      .order('nome'),
-
-    supabaseClient
-      .from('usuarios')
-      .select('id,nome,email,loja_id,perfil,ativo')
-      .order('nome')
-  ]);
-
-  const data = valididadesResult.data;
-  const error = valididadesResult.error;
-
-  if(error){
-    console.error('Erro ao carregar validades:',error);
-    summary.textContent = '';
-    list.innerHTML = `
-      <div class="empty">
-        <div class="empty-icon">⚠</div>
-        <strong>Não foi possível carregar as validades</strong>
-        <span>${escapeHtml(error.message || 'Erro desconhecido')}</span>
-      </div>
-    `;
-    return;
-  }
-
-  stores = !lojasResult.error ? (lojasResult.data || []) : [];
-  employees = !usuariosResult.error ? (usuariosResult.data || []) : [];
-
-  if(lojasResult.error) console.warn('Não foi possível carregar lojas para o filtro:',lojasResult.error);
-  if(usuariosResult.error) console.warn('Não foi possível carregar funcionários para o filtro:',usuariosResult.error);
-
-  preencherFiltros();
-
-  const storeMap = new Map(stores.map(s => [String(s.id), s.nome || `Loja ${s.id}`]));
-  const employeeMap = new Map(employees.map(u => [
-    String(u.id),
-    u.nome || u.email || `Usuário ${u.id}`
-  ]));
-
-  records=(data || []).map(row=>{
-    const produto=row.produtos || {};
-    const codigo=produto.codigo_barras || '';
-    const nome=produto.nome || 'Produto sem nome';
-    const validade=row.validade || null;
-    const days=daysUntil(validade);
-
-    return {
-      id:row.id,
-      produto_id:row.produto_id,
-      loja_id:row.loja_id,
-      cadastrado_por:row.cadastrado_por,
-      validade,
-      codigo,
-      nome,
-      foto_url:produto.foto_url || '',
-      loja_nome:storeMap.get(String(row.loja_id)) || '',
-      cadastrado_por_nome:employeeMap.get(String(row.cadastrado_por)) || '',
-      _search:(nome+' '+codigo).toLowerCase(),
-      _days:days,
-      _date:formatDate(validade),
-      _status:statusFor(days)
-    };
-  });
-
-  // A ordenação é feita uma única vez após o carregamento. Pesquisa e filtros
-  // reaproveitam essa ordem sem precisar ordenar a lista novamente.
-  records.sort((a,b)=>{
-    const da=a._days, db=b._days;
-    if(da===null) return 1;
-    if(db===null) return -1;
-    return da-db;
-  });
-
-  render();
-}
-
-
-/* =========================================================
-   ACESSO / FILTROS
-========================================================= */
-
-function nomePerfil(perfil){
-  return {
-    funcionario:'Funcionário',
-    gerente:'Gerente',
-    gerente_geral:'Gerente geral',
-    admin_global:'Administrador global'
-  }[perfil] || 'Usuário';
-}
-
-function configurarAcesso(dados){
-  const filtersWrap=document.getElementById('filtersWrap');
-  const storeRow=document.getElementById('storeFilterRow');
-  const employeeRow=document.getElementById('employeeFilterRow');
-  const badge=document.getElementById('accessBadge');
-  const dashboardBtn=document.getElementById('dashboardBtn');
-
-  badge.textContent = `Acesso: ${nomePerfil(dados.usuario.perfil)}`;
-
-  // Dashboard é exclusivo para perfis gerenciais.
-  if(['gerente','gerente_geral','admin_global'].includes(dados.usuario.perfil)){
-    dashboardBtn.classList.add('visible');
-  }else{
-    dashboardBtn.classList.remove('visible');
-  }
-
-  // Funcionário: somente os próprios registros. O RLS já garante isso.
-  if(dados.usuario.perfil === 'funcionario'){
-    filtersWrap.classList.remove('open');
-    storeRow.classList.add('hidden');
-    employeeRow.classList.add('hidden');
-    return;
-  }
-
-  filtersWrap.classList.add('open');
-
-  if(dados.usuario.perfil === 'gerente'){
-    storeRow.classList.add('hidden');
-    employeeRow.classList.remove('hidden');
-  }else if(dados.usuario.perfil === 'gerente_geral'){
-    storeRow.classList.remove('hidden');
-    employeeRow.classList.add('hidden');
-  }else if(dados.usuario.perfil === 'admin_global'){
-    storeRow.classList.remove('hidden');
-    employeeRow.classList.remove('hidden');
-  }else{
-    storeRow.classList.add('hidden');
-    employeeRow.classList.add('hidden');
-  }
-}
-
-function preencherFiltros(){
-  const storeFilter=document.getElementById('storeFilter');
-  const employeeFilter=document.getElementById('employeeFilter');
-
-  const storeValue=storeFilter.value;
-  const employeeValue=employeeFilter.value;
-
-  storeFilter.innerHTML='<option value="">Todas as lojas</option>';
-  employeeFilter.innerHTML='<option value="">Todos os funcionários</option>';
-
-  const lojasAtivas = stores.filter(s => s.ativo !== false);
-  lojasAtivas.forEach(loja=>{
-    const option=document.createElement('option');
-    option.value=String(loja.id);
-    option.textContent=loja.nome || `Loja ${loja.id}`;
-    storeFilter.appendChild(option);
-  });
-
-  employees
-    .filter(u => u.ativo !== false && ['funcionario','gerente'].includes(u.perfil))
-    .forEach(u=>{
-      const option=document.createElement('option');
-      option.value=String(u.id);
-      option.textContent=u.nome || u.email || `Usuário ${u.id}`;
-      employeeFilter.appendChild(option);
-    });
-
-  if([...storeFilter.options].some(o=>o.value===storeValue)) storeFilter.value=storeValue;
-  if([...employeeFilter.options].some(o=>o.value===employeeValue)) employeeFilter.value=employeeValue;
-}
-
-function filtroAtual(){
-  return {
-    loja:document.getElementById('storeFilter').value,
-    funcionario:document.getElementById('employeeFilter').value
-  };
-}
-
-function matchesAccess(record){
-  const perfil=currentPerfil;
-  const filtro=filtroAtual();
-
-  if(perfil === 'funcionario'){
-    return String(record.cadastrado_por) === String(currentUsuarioId);
-  }
-
-  if(perfil === 'gerente'){
-    if(String(record.loja_id) !== String(currentLojaId)) return false;
-    if(filtro.funcionario && String(record.cadastrado_por) !== String(filtro.funcionario)) return false;
-    return true;
-  }
-
-  if(perfil === 'gerente_geral'){
-    if(filtro.loja && String(record.loja_id) !== String(filtro.loja)) return false;
-    return true;
-  }
-
-  if(perfil === 'admin_global'){
-    if(filtro.loja && String(record.loja_id) !== String(filtro.loja)) return false;
-    if(filtro.funcionario && String(record.cadastrado_por) !== String(filtro.funcionario)) return false;
-    return true;
-  }
-
-  return false;
-}
-
-document.getElementById('storeFilter').addEventListener('change',render);
-document.getElementById('employeeFilter').addEventListener('change',render);
-
-/* =========================================================
-   PESQUISA
-========================================================= */
-
-function matches(record,term){
-  if(!term) return true;
-  return record._search.includes(term);
-}
-
-
-/* =========================================================
-   MODAL
-========================================================= */
-
-function openRecord(record){
-
-  selectedRecordId =
-    record.id;
-
-  document.getElementById(
-    'modalProduct'
-  ).textContent =
-    `${getProductName(record)} • ${record.codigo || ''}`;
-
-  document.getElementById(
-    'modalDate'
-  ).value =
-    record.validade || '';
-
-  document.getElementById(
-    'editModal'
-  ).classList.add('open');
-
-}
-
-
-function openRecordById(id){
-
-  const record =
-    records.find(
-      r => String(r.id) === String(id)
-    );
-
-  if(record){
-    openRecord(record);
-  }
-
-}
-
-
-function closeRecordModal(){
-
-  selectedRecordId = null;
-
-  document.getElementById(
-    'editModal'
-  ).classList.remove('open');
-
-}
-
-
-/* =========================================================
-   EDITAR VALIDADE
-========================================================= */
-
-async function saveEditedDate(){
-
-  if(!selectedRecordId){
-    return;
-  }
-
-  const newDate =
-    document.getElementById(
-      'modalDate'
-    ).value;
-
-  if(!newDate){
-
-    alert(
-      'Informe uma data de validade.'
-    );
-
-    return;
-  }
-
-
-  const current =
-    records.find(
-      r =>
-        String(r.id) ===
-        String(selectedRecordId)
-    );
-
-  if(!current){
-
-    closeRecordModal();
-
-    return;
-  }
-
-
-  const duplicate =
-    records.some(
-      r =>
-        String(r.id) !==
-          String(current.id) &&
-        String(r.produto_id) ===
-          String(current.produto_id) &&
-        r.validade === newDate
-    );
-
-
-  if(duplicate){
-
-    alert(
-      'Essa validade já está cadastrada para este produto.'
-    );
-
-    return;
-  }
-
-
-  const {
-    error
-  } = await supabaseClient
-    .from('validades')
-    .update({
-      validade:newDate
-    })
-    .eq(
-      'id',
-      current.id
-    )
-    .eq(
-      'loja_id',
-      current.loja_id
-    );
-
-
-  if(error){
-
-    console.error(
-      'Erro ao editar validade:',
-      error
-    );
-
-    alert(
-      'Não foi possível salvar a alteração.\n\n' +
-      error.message
-    );
-
-    return;
-  }
-
-
-  current.validade=newDate;
-  current._days=daysUntil(newDate);
-  current._date=formatDate(newDate);
-  current._status=statusFor(current._days);
-
-  closeRecordModal();
-
-  render();
-
-}
-
-
-/* =========================================================
-   EXCLUIR VALIDADE
-========================================================= */
-
-async function deleteRecord(){
-
-  if(!selectedRecordId){
-    return;
-  }
-
-  const record =
-    records.find(
-      r =>
-        String(r.id) ===
-        String(selectedRecordId)
-    );
-
-  if(!record){
-
-    closeRecordModal();
-
-    return;
-  }
-
-
-  if(
-    !confirm(
-      `Excluir a validade de ${getProductName(record)}?`
-    )
-  ){
-
-    return;
-  }
-
-
-  const {
-    error
-  } = await supabaseClient
-    .from('validades')
-    .delete()
-    .eq(
-      'id',
-      record.id
-    )
-    .eq(
-      'loja_id',
-      record.loja_id
-    );
-
-
-  if(error){
-
-    console.error(
-      'Erro ao excluir validade:',
-      error
-    );
-
-    alert(
-      'Não foi possível excluir o registro.\n\n' +
-      error.message
-    );
-
-    return;
-  }
-
-
-  records =
-    records.filter(
-      r =>
-        String(r.id) !==
-        String(record.id)
-    );
-
-
-  closeRecordModal();
-
-  render();
-
-}
-
-
-/* =========================================================
-   RENDER
-========================================================= */
-
-function render(){
-  const list=document.getElementById('list');
-  const summary=document.getElementById('summary');
-  const term=document.getElementById('searchInput').value.trim().toLowerCase();
-
-  const data=records
-    .filter(r=>matchesAccess(r))
-    .filter(r=>matches(r,term));
-
-  summary.textContent=term
-    ? `${data.length} ${data.length===1?'registro encontrado':'registros encontrados'}`
-    : `${data.length} ${data.length===1?'registro':'registros'}`;
-
-  if(!data.length){
-    list.innerHTML=`<div class="empty">
-      <div class="empty-icon">◌</div>
-      <strong>Nenhuma validade cadastrada</strong>
-      <span>As validades adicionadas no cadastro aparecerão aqui.</span>
-    </div>`;
-    return;
-  }
-
-  list.innerHTML=data.map(record=>{
-    const days=record._days;
-    const st=record._status;
-    const img=getPhoto(record);
-    const store=record.loja_nome || getStore(record);
-
-    return `<article class="item" role="button" tabindex="0" data-record-id="${escapeHtml(record.id)}">
-      <div class="photo">${img
-        ? `<img src="${escapeHtml(img)}" alt="" loading="lazy" decoding="async">`
-        : `<span>□</span>`}</div>
-      <div class="info">
-        <div class="topline">
-          <div class="date">${record._date}</div>
-          <div class="status ${st.kind}">${st.label}</div>
-        </div>
-        <div class="name">${escapeHtml(record.nome)}</div>
-        <div class="code">${escapeHtml(record.codigo || '')}</div>
-        ${store && (currentPerfil==='gerente_geral' || currentPerfil==='admin_global') ? `<div class="store">Loja: ${escapeHtml(store)}</div>` : ''}
-        ${(currentPerfil==='gerente' || currentPerfil==='gerente_geral' || currentPerfil==='admin_global') && record.cadastrado_por_nome ? `<div class="store">Cadastrado por: ${escapeHtml(record.cadastrado_por_nome)}</div>` : ''}
-        ${days!==null ? `<div class="days ${st.kind}">${daysText(days)}</div>` : ''}
-      </div>
-    </article>`;
-  }).join('');
-}
-
-
-// Um único listener para toda a lista, em vez de criar handlers em cada item.
-document.getElementById('list').addEventListener('click',e=>{
-  const item=e.target.closest('.item[data-record-id]');
-  if(item) openRecordById(item.dataset.recordId);
-});
-document.getElementById('list').addEventListener('keydown',e=>{
-  if(e.key!=='Enter' && e.key!==' ') return;
-  const item=e.target.closest('.item[data-record-id]');
-  if(!item) return;
-  e.preventDefault();
-  openRecordById(item.dataset.recordId);
-});
-
-
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
-
-function escapeHtml(value){
-
-  return String(value ?? '')
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;')
-    .replace(/'/g,'&#039;');
-
-}
-
-
-/* =========================================================
-   PESQUISA
-========================================================= */
-
-document
-  .getElementById('dashboardBtn')
-  .addEventListener('click',()=>{
-    window.location.assign('./dashboard.html');
-  });
-
-
-document
-  .getElementById('searchBtn')
-  .addEventListener(
-    'click',
-    () => {
-
-      const wrap =
-        document.getElementById(
-          'searchWrap'
+        msg(
+          'Selecione a loja onde esta validade será cadastrada.',
+          'err'
         );
 
-      wrap.classList.toggle(
-        'open'
+        if(storeEl){
+          storeEl.focus();
+        }
+
+        return;
+      }
+    }
+
+
+    if(!lojaId){
+
+      msg(
+        'Usuário sem loja vinculada.',
+        'err'
+      );
+
+      return;
+    }
+
+
+    /* -------------------------------------------------------
+       BOTÃO
+       ------------------------------------------------------- */
+
+    const code=
+      normalize(
+        selected.codigo
       );
 
 
-      if(
-        wrap.classList.contains('open')
-      ){
+    const saveBtn=
+      $('saveBtn');
 
-        document
-          .getElementById(
-            'searchInput'
+
+    if(saveBtn){
+
+      saveBtn.disabled=true;
+
+      saveBtn.textContent=
+        'SALVANDO...';
+    }
+
+
+    msg(
+      'Salvando validade...',
+      ''
+    );
+
+
+    /* -------------------------------------------------------
+       SESSÃO + PRODUTO EM PARALELO
+       ------------------------------------------------------- */
+
+    const sessionPromise=
+      supabaseClient
+        .auth
+        .getSession();
+
+
+    const cachedProduct=
+      productCache.get(code);
+
+
+    const [
+      {
+        data:sessionData,
+        error:sessionError
+      },
+      productResult
+    ] =
+      await Promise.all([
+
+        sessionPromise,
+
+        cachedProduct?.id
+
+          ?
+
+          Promise.resolve({
+            data:{
+              id:cachedProduct.id,
+              codigo_barras:
+                cachedProduct.codigo,
+              nome:
+                cachedProduct.nome,
+              foto_url:
+                cachedProduct.foto_url || '',
+              ativo:true
+            },
+            error:null
+          })
+
+          :
+
+          supabaseClient
+            .from('produtos')
+            .select(
+              'id,codigo_barras,nome,foto_url,ativo'
+            )
+            .eq(
+              'codigo_barras',
+              code
+            )
+            .eq(
+              'ativo',
+              true
+            )
+            .limit(1)
+            .maybeSingle()
+
+      ]);
+
+
+    if(
+      sessionError ||
+      !sessionData.session
+    ){
+
+      window.location.replace(
+        'login.html'
+      );
+
+      return;
+    }
+
+
+    const usuario=
+      currentUsuario;
+
+
+    if(!usuario){
+
+      throw new Error(
+        'Não foi possível identificar o usuário.'
+      );
+    }
+
+
+    let {
+      data:produto,
+      error:produtoError
+    } =
+      productResult;
+
+
+    if(produtoError){
+
+      throw new Error(
+        'Não foi possível localizar o produto: '+
+        produtoError.message
+      );
+    }
+
+
+    /* -------------------------------------------------------
+       CRIA PRODUTO SE FOR NOVO
+       ------------------------------------------------------- */
+
+    if(!produto){
+
+      const {
+        data:novoProduto,
+        error:novoProdutoError
+      } =
+        await supabaseClient
+          .from('produtos')
+          .insert({
+            codigo_barras:code,
+            nome:name,
+            ativo:true
+          })
+          .select(
+            'id,codigo_barras,nome,foto_url,ativo'
           )
-          .focus();
+          .single();
 
-      }else{
 
-        document
-          .getElementById(
-            'searchInput'
-          )
-          .value = '';
+      if(novoProdutoError){
 
-        render();
+        throw new Error(
+          'Não foi possível cadastrar o produto: '+
+          novoProdutoError.message
+        );
+      }
+
+
+      produto=
+        novoProduto;
+
+
+      productCache.set(
+        code,
+        {
+          id:novoProduto.id,
+          codigo:code,
+          nome:
+            novoProduto.nome ||
+            name,
+          foto_url:
+            novoProduto.foto_url ||
+            ''
+        }
+      );
+
+
+    }else{
+
+      productCache.set(
+        code,
+        {
+          id:produto.id,
+          codigo:code,
+          nome:
+            produto.nome ||
+            name,
+          foto_url:
+            produto.foto_url ||
+            ''
+        }
+      );
+
+    }
+
+
+    /* -------------------------------------------------------
+       FOTO
+       ------------------------------------------------------- */
+
+    const file=
+      $('photo') &&
+      $('photo').files[0];
+
+
+    if(file){
+
+      if(saveBtn){
+
+        saveBtn.textContent=
+          'ENVIANDO FOTO...';
 
       }
 
+
+      msg(
+        'Enviando foto...',
+        ''
+      );
+
+
+      const fotoUrl=
+        await uploadProductPhoto(
+          file,
+          produto.id
+        );
+
+
+      /* Atualiza produtos.foto_url */
+
+      const {
+        error:fotoError
+      } =
+        await supabaseClient
+          .from('produtos')
+          .update({
+            foto_url:fotoUrl
+          })
+          .eq(
+            'id',
+            produto.id
+          );
+
+
+      if(fotoError){
+
+        throw new Error(
+          'A foto foi enviada, mas não foi possível vinculá-la ao produto: '+
+          fotoError.message
+        );
+      }
+
+
+      /* Atualiza objeto atual */
+
+      produto.foto_url=
+        fotoUrl;
+
+
+      productCache.set(
+        code,
+        {
+          id:produto.id,
+          codigo:code,
+          nome:
+            produto.nome ||
+            name,
+          foto_url:
+            fotoUrl
+        }
+      );
+
     }
-  );
 
 
-let searchTimer=0;
-document.getElementById('searchInput').addEventListener('input',()=>{
-  clearTimeout(searchTimer);
-  searchTimer=setTimeout(render,80);
-});
+    /* -------------------------------------------------------
+       VERIFICA VALIDADE DUPLICADA
+       ------------------------------------------------------- */
+
+    if(saveBtn){
+
+      saveBtn.textContent=
+        'VERIFICANDO...';
+
+    }
 
 
-/* =========================================================
-   MODAL
-========================================================= */
-
-document
-  .getElementById('modalSave')
-  .addEventListener(
-    'click',
-    saveEditedDate
-  );
-
-
-document
-  .getElementById('modalDelete')
-  .addEventListener(
-    'click',
-    deleteRecord
-  );
-
-
-document
-  .getElementById('modalClose')
-  .addEventListener(
-    'click',
-    closeRecordModal
-  );
+    const {
+      data:existente,
+      error:existenteError
+    } =
+      await supabaseClient
+        .from('validades')
+        .select('id')
+        .eq(
+          'produto_id',
+          produto.id
+        )
+        .eq(
+          'loja_id',
+          lojaId
+        )
+        .eq(
+          'validade',
+          date
+        )
+        .limit(1)
+        .maybeSingle();
 
 
-document
-  .getElementById('editModal')
-  .addEventListener(
-    'click',
-    e => {
+    if(existenteError){
 
-      if(
-        e.target.id ===
-        'editModal'
-      ){
+      throw new Error(
+        'Não foi possível verificar a validade: '+
+        existenteError.message
+      );
+    }
 
-        closeRecordModal();
+
+    if(existente){
+
+      msg(
+        'Essa validade já foi cadastrada para este produto nesta loja.',
+        'err'
+      );
+
+
+      if(saveBtn){
+
+        saveBtn.disabled=false;
+
+        saveBtn.textContent=
+          (
+            selected &&
+            !selected.nome
+          )
+            ? 'SALVAR PRODUTO'
+            : 'SALVAR VALIDADE';
 
       }
 
+      return;
     }
-  );
+
+
+    /* -------------------------------------------------------
+       SALVA VALIDADE
+       ------------------------------------------------------- */
+
+    if(saveBtn){
+
+      saveBtn.textContent=
+        'SALVANDO VALIDADE...';
+
+    }
+
+
+    const {
+      error:validadeError
+    } =
+      await supabaseClient
+        .from('validades')
+        .insert({
+          produto_id:produto.id,
+          loja_id:lojaId,
+          validade:date,
+          cadastrado_por:usuario.id
+        });
+
+
+    if(validadeError){
+
+      throw new Error(
+        'Não foi possível salvar a validade: '+
+        validadeError.message
+      );
+    }
+
+
+    /* -------------------------------------------------------
+       FINAL
+       ------------------------------------------------------- */
+
+    window.location.href=
+      'lista_valididades.html';
+
+
+  }catch(e){
+
+    console.error(
+      'ERRO AO SALVAR NO SUPABASE:',
+      e
+    );
+
+
+    msg(
+      'Erro ao salvar: '+
+      (
+        e.message ||
+        'verifique as permissões.'
+      ),
+      'err'
+    );
+
+
+    const saveBtn=
+      $('saveBtn');
+
+
+    if(saveBtn){
+
+      saveBtn.disabled=false;
+
+      saveBtn.textContent=
+        (
+          selected &&
+          !selected.nome
+        )
+          ? 'SALVAR PRODUTO'
+          : 'SALVAR VALIDADE';
+    }
+
+  }
+}
 
 
 /* =========================================================
-   LEITOR
-========================================================= */
+   ABRIR PELO CÓDIGO DA URL
+   ========================================================= */
 
-function voltarAoLeitor(){
+function openFromUrl(){
 
-  window.location.assign(
-    './leitor.html'
-  );
+  const codigo=
+    new URLSearchParams(
+      window.location.search
+    ).get('codigo');
 
+
+  if(codigo){
+
+    find(codigo);
+
+  }else{
+
+    window.location.href=
+      'leitor.html';
+
+  }
 }
 
 
 /* =========================================================
    INICIALIZAÇÃO
-========================================================= */
+   ========================================================= */
 
-(async function iniciar(){
+(async function iniciarTela(){
 
-  // Garante uma única verificação de sessão. Depois, as duas cargas independentes
-  // podem acontecer ao mesmo tempo.
-  const dados = await getSessionAndUser();
-  if(!dados) return;
+  try{
 
-  await Promise.all([
-    carregarConta(),
-    carregarValidades()
-  ]);
+    await carregarContextoUsuario();
+
+    openFromUrl();
+
+  }catch(e){
+
+    console.error(e);
+
+    msg(
+      'Não foi possível carregar os dados do usuário.',
+      'err'
+    );
+
+  }
 
 })();
 
-</script>
 
-</body>
-</html>
+/* =========================================================
+   MICROINTERAÇÕES
+   ========================================================= */
+
+(function(){
+
+  document.addEventListener(
+    'click',
+    function(e){
+
+      const target=
+        e.target.closest(
+          'button, .fab'
+        );
+
+
+      if(!target) return;
+
+
+      const rect=
+        target.getBoundingClientRect();
+
+
+      const size=
+        Math.max(
+          rect.width,
+          rect.height
+        ) * .45;
+
+
+      const ripple=
+        document.createElement(
+          'span'
+        );
+
+
+      ripple.className=
+        'ripple';
+
+
+      ripple.style.width=
+        ripple.style.height=
+          size+'px';
+
+
+      ripple.style.left=
+        (
+          e.clientX -
+          rect.left -
+          size/2
+        )+'px';
+
+
+      ripple.style.top=
+        (
+          e.clientY -
+          rect.top -
+          size/2
+        )+'px';
+
+
+      target.appendChild(
+        ripple
+      );
+
+
+      setTimeout(
+        ()=>ripple.remove(),
+        520
+      );
+
+    },
+    true
+  );
+
+
+  document
+    .querySelectorAll('input')
+    .forEach(
+      function(input){
+
+        input.addEventListener(
+          'focus',
+          function(){
+
+            this.classList.add(
+              'pop-in'
+            );
+
+          }
+        );
+
+      }
+    );
+
+})();
+</script>
