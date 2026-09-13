@@ -271,6 +271,25 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://siuvsahkjfyzdcrskleg.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_At--bKaS3ZiZA0dmyN5FIQ_5WF735Nl';
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+(async function verificarSessao(){
+  const { data, error } = await supabaseClient.auth.getSession();
+
+  if(error || !data.session){
+    window.location.replace('login.html');
+    return;
+  }
+})();
+</script>
+
 <script>
 const KEY = 'validades_v2';
 const PHOTOS = 'fotos_produtos_v2';
