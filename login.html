@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f7f7f8;font-family:Arial,sans-serif;color:#171717}
+.app{max-width:520px;margin:auto;min-height:100vh;padding:14px;display:flex;align-items:center}
+.card{width:100%;background:#fff;border-radius:22px;padding:28px 22px;box-shadow:0 4px 18px rgba(0,0,0,.07)}
+.logo{font-size:20px;font-weight:900;margin-bottom:6px}
+.subtitle{color:#666;font-size:14px;margin-bottom:24px}
+label{display:block;font-size:13px;font-weight:700;margin:0 0 7px}
+input{width:100%;padding:15px;border:1px solid #d7d7d7;border-radius:14px;font-size:15px;outline:none;margin-bottom:16px}
+input:focus{border-color:#171717}
+button{width:100%;border:0;border-radius:16px;height:60px;font-size:16px;font-weight:800;cursor:pointer}
+.primary{background:#171717;color:#fff}
+.primary:disabled{opacity:.6;cursor:not-allowed}
+.forgot{background:transparent;color:#171717;height:auto;padding:14px 0 2px;font-size:14px}
+.msg{display:none;margin:14px 0 0;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.4}
+.ok{display:block;background:#eaf7ee;color:#176b35}
+.err{display:block;background:#fff0f0;color:#a32222}
+</style>
+</head>
+<body>
+<div class="app"><main class="card">
+<div class="logo">Validades</div>
+<div class="subtitle">Entre com seu e-mail e senha para continuar.</div>
+<form id="loginForm">
+<label for="email">E-mail</label>
+<input id="email" type="email" autocomplete="username" placeholder="seu@email.com" required>
+<label for="password">Senha</label>
+<input id="password" type="password" autocomplete="current-password" placeholder="Sua senha" required>
+<button id="loginBtn" class="primary" type="submit">ENTRAR</button>
+</form>
+<button id="forgotBtn" class="forgot" type="button">Esqueci minha senha</button>
+<div id="msg" class="msg"></div>
+</main></div>
+<script>
+const SUPABASE_URL='https://siuvsahkjfyzdcrskleg.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_At--bKaS3ZiZA0dmyN5FIQ_5WF735Nl';
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+const form=document.getElementById('loginForm'), emailInput=document.getElementById('email'),
+passwordInput=document.getElementById('password'), loginBtn=document.getElementById('loginBtn'),
+forgotBtn=document.getElementById('forgotBtn'), msg=document.getElementById('msg');
+
+function showMessage(text,type='err'){msg.textContent=text;msg.className='msg '+type}
+function setLoading(v){loginBtn.disabled=v;loginBtn.textContent=v?'ENTRANDO...':'ENTRAR'}
+
+form.addEventListener('submit',async e=>{
+e.preventDefault();
+const email=emailInput.value.trim(),password=passwordInput.value;
+if(!email||!password)return;
+msg.className='msg';setLoading(true);
+const {error}=await supabaseClient.auth.signInWithPassword({email,password});
+setLoading(false);
+if(error){showMessage('E-mail ou senha incorretos.');return}
+showMessage('Login realizado com sucesso.','ok');
+});
+
+forgotBtn.addEventListener('click',async()=>{
+const email=emailInput.value.trim();
+if(!email){showMessage('Digite seu e-mail primeiro para recuperar a senha.');emailInput.focus();return}
+const {error}=await supabaseClient.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+window.location.pathname});
+if(error){showMessage('Não foi possível enviar o e-mail de recuperação.');return}
+showMessage('Se esse e-mail estiver cadastrado, você receberá as instruções para redefinir a senha.','ok');
+});
+</script>
+</body>
+</html>
