@@ -791,23 +791,40 @@ async function carregarValidades(){
   // O RLS do Supabase decide quais validades o usuário realmente pode ver.
   // Por isso não filtramos loja_id aqui: gerente_geral e admin_global precisam
   // conseguir receber registros de todas as lojas.
-  const { data, error } = await supabaseClient
-    .from('validades')
-    .select(`
-      id,
-      validade,
-      produto_id,
-      loja_id,
-      cadastrado_por,
-      produtos (
+  // As três consultas são independentes. Fazê-las em paralelo reduz bastante
+  // o tempo de espera da tela, principalmente em conexões móveis.
+  const [valididadesResult, lojasResult, usuariosResult] = await Promise.all([
+    supabaseClient
+      .from('validades')
+      .select(`
         id,
-        codigo_barras,
-        nome,
-        foto_url,
-        ativo
-      )
-    `)
-    .order('validade', {ascending:true});
+        validade,
+        produto_id,
+        loja_id,
+        cadastrado_por,
+        produtos (
+          id,
+          codigo_barras,
+          nome,
+          foto_url,
+          ativo
+        )
+      `)
+      .order('validade', {ascending:true}),
+
+    supabaseClient
+      .from('lojas')
+      .select('id,nome,ativo')
+      .order('nome'),
+
+    supabaseClient
+      .from('usuarios')
+      .select('id,nome,email,loja_id,perfil,ativo')
+      .order('nome')
+  ]);
+
+  const data = valididadesResult.data;
+  const error = valididadesResult.error;
 
   if(error){
     console.error('Erro ao carregar validades:',error);
@@ -821,13 +838,6 @@ async function carregarValidades(){
     `;
     return;
   }
-
-  // Busca os nomes usados nos filtros. São consultas separadas para não
-  // depender de relacionamentos FK configurados no Supabase.
-  const [lojasResult, usuariosResult] = await Promise.all([
-    supabaseClient.from('lojas').select('id,nome,ativo').order('nome'),
-    supabaseClient.from('usuarios').select('id,nome,email,loja_id,perfil,ativo').order('nome')
-  ]);
 
   stores = !lojasResult.error ? (lojasResult.data || []) : [];
   employees = !usuariosResult.error ? (usuariosResult.data || []) : [];
@@ -866,6 +876,15 @@ async function carregarValidades(){
       _date:formatDate(validade),
       _status:statusFor(days)
     };
+  });
+
+  // A ordenação é feita uma única vez após o carregamento. Pesquisa e filtros
+  // reaproveitam essa ordem sem precisar ordenar a lista novamente.
+  records.sort((a,b)=>{
+    const da=a._days, db=b._days;
+    if(da===null) return 1;
+    if(db===null) return -1;
+    return da-db;
   });
 
   render();
@@ -1254,14 +1273,7 @@ function render(){
 
   const data=records
     .filter(r=>matchesAccess(r))
-    .filter(r=>matches(r,term))
-    .slice()
-    .sort((a,b)=>{
-      const da=a._days, db=b._days;
-      if(da===null) return 1;
-      if(db===null) return -1;
-      return da-db;
-    });
+    .filter(r=>matches(r,term));
 
   summary.textContent=term
     ? `${data.length} ${data.length===1?'registro encontrado':'registros encontrados'}`
@@ -1331,129 +1343,6 @@ function escapeHtml(value){
 
 }
 
-
-/* =========================================================
-   ACESSO / FILTROS
-========================================================= */
-
-function nomePerfil(perfil){
-  return {
-    funcionario:'Funcionário',
-    gerente:'Gerente',
-    gerente_geral:'Gerente geral',
-    admin_global:'Administrador global'
-  }[perfil] || 'Usuário';
-}
-
-function configurarAcesso(dados){
-  const filtersWrap=document.getElementById('filtersWrap');
-  const storeRow=document.getElementById('storeFilterRow');
-  const employeeRow=document.getElementById('employeeFilterRow');
-  const badge=document.getElementById('accessBadge');
-  const dashboardBtn=document.getElementById('dashboardBtn');
-
-  badge.textContent = `Acesso: ${nomePerfil(dados.usuario.perfil)}`;
-
-  // Dashboard exclusivo para perfis gerenciais.
-  if(['gerente','gerente_geral','admin_global'].includes(dados.usuario.perfil)){
-    dashboardBtn.classList.add('visible');
-  }else{
-    dashboardBtn.classList.remove('visible');
-  }
-
-  // Funcionário: somente os próprios registros. O RLS já garante isso.
-  if(dados.usuario.perfil === 'funcionario'){
-    filtersWrap.classList.remove('open');
-    storeRow.classList.add('hidden');
-    employeeRow.classList.add('hidden');
-    return;
-  }
-
-  filtersWrap.classList.add('open');
-
-  if(dados.usuario.perfil === 'gerente'){
-    storeRow.classList.add('hidden');
-    employeeRow.classList.remove('hidden');
-  }else if(dados.usuario.perfil === 'gerente_geral'){
-    storeRow.classList.remove('hidden');
-    employeeRow.classList.add('hidden');
-  }else if(dados.usuario.perfil === 'admin_global'){
-    storeRow.classList.remove('hidden');
-    employeeRow.classList.remove('hidden');
-  }else{
-    storeRow.classList.add('hidden');
-    employeeRow.classList.add('hidden');
-  }
-}
-
-function preencherFiltros(){
-  const storeFilter=document.getElementById('storeFilter');
-  const employeeFilter=document.getElementById('employeeFilter');
-
-  const storeValue=storeFilter.value;
-  const employeeValue=employeeFilter.value;
-
-  storeFilter.innerHTML='<option value="">Todas as lojas</option>';
-  employeeFilter.innerHTML='<option value="">Todos os funcionários</option>';
-
-  const lojasAtivas = stores.filter(s => s.ativo !== false);
-  lojasAtivas.forEach(loja=>{
-    const option=document.createElement('option');
-    option.value=String(loja.id);
-    option.textContent=loja.nome || `Loja ${loja.id}`;
-    storeFilter.appendChild(option);
-  });
-
-  employees
-    .filter(u => u.ativo !== false && ['funcionario','gerente'].includes(u.perfil))
-    .forEach(u=>{
-      const option=document.createElement('option');
-      option.value=String(u.id);
-      option.textContent=u.nome || u.email || `Usuário ${u.id}`;
-      employeeFilter.appendChild(option);
-    });
-
-  if([...storeFilter.options].some(o=>o.value===storeValue)) storeFilter.value=storeValue;
-  if([...employeeFilter.options].some(o=>o.value===employeeValue)) employeeFilter.value=employeeValue;
-}
-
-function filtroAtual(){
-  return {
-    loja:document.getElementById('storeFilter').value,
-    funcionario:document.getElementById('employeeFilter').value
-  };
-}
-
-function matchesAccess(record){
-  const perfil=currentPerfil;
-  const filtro=filtroAtual();
-
-  if(perfil === 'funcionario'){
-    return String(record.cadastrado_por) === String(currentUsuarioId);
-  }
-
-  if(perfil === 'gerente'){
-    if(String(record.loja_id) !== String(currentLojaId)) return false;
-    if(filtro.funcionario && String(record.cadastrado_por) !== String(filtro.funcionario)) return false;
-    return true;
-  }
-
-  if(perfil === 'gerente_geral'){
-    if(filtro.loja && String(record.loja_id) !== String(filtro.loja)) return false;
-    return true;
-  }
-
-  if(perfil === 'admin_global'){
-    if(filtro.loja && String(record.loja_id) !== String(filtro.loja)) return false;
-    if(filtro.funcionario && String(record.cadastrado_por) !== String(filtro.funcionario)) return false;
-    return true;
-  }
-
-  return false;
-}
-
-document.getElementById('storeFilter').addEventListener('change',render);
-document.getElementById('employeeFilter').addEventListener('change',render);
 
 /* =========================================================
    PESQUISA
@@ -1581,9 +1470,15 @@ function voltarAoLeitor(){
 
 (async function iniciar(){
 
-  await carregarConta();
+  // Garante uma única verificação de sessão. Depois, as duas cargas independentes
+  // podem acontecer ao mesmo tempo.
+  const dados = await getSessionAndUser();
+  if(!dados) return;
 
-  await carregarValidades();
+  await Promise.all([
+    carregarConta(),
+    carregarValidades()
+  ]);
 
 })();
 
